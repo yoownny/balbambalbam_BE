@@ -14,10 +14,15 @@ public class UserLevel {
     @Id
     @Column(name = "user_id")
     private Long userId;
+
     @Column(name = "level_id")
     private long levelId;
+
     @Column(name = "user_experience")
     private long userExperience;
+
+    @Column(name = "category_id")
+    private long categoryId;
 
     public UserLevel(){
     }
