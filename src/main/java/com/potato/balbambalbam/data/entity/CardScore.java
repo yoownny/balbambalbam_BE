@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Entity(name = "card_score")
 @NoArgsConstructor
 @Getter @ToString
@@ -19,6 +21,8 @@ public class CardScore {
     private Long userId;
     @Column(name = "card_id", nullable = false)
     private Long cardId;
+    @Column(name = "time_stamp")
+    private LocalDateTime timeStamp;
 
     public CardScore(int highestScore, Long userId, Long cardId) {
         this.highestScore = highestScore;
