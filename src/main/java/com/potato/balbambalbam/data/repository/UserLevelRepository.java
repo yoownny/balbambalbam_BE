@@ -10,4 +10,7 @@ import java.util.Optional;
 public interface UserLevelRepository extends JpaRepository<UserLevel, Long> {
 
     Optional<UserLevel> findByUserId(Long userId);
+
+    boolean existsByUserId(Long userId);
+    void deleteByUserId(Long userId);
 }

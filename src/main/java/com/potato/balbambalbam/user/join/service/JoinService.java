@@ -131,7 +131,6 @@ public class JoinService {
             userLevelRepository.deleteByUserId(userId);    // deleteById 대신 deleteByUserId 사용
         }
 
-        //userLevelRepository.deleteById(userId);
         refreshRepository.deleteBySocialId(user.getSocialId());
         userRepository.deleteById(userId);
     }

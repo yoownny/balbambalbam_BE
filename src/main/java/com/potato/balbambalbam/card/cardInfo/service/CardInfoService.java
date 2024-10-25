@@ -63,12 +63,14 @@ public class CardInfoService {
         else {
             phonemeId = card.getPhonemesMap().get(0);
         }
-        return pronunciationPictureRepository.findByPhonemeId(phonemeId).orElseThrow(() -> new IllegalArgumentException("음절 설명 찾기에 실패했습니다"));
+        return pronunciationPictureRepository.findByPhonemeId(phonemeId)
+                .orElseThrow(() -> new IllegalArgumentException("음절 설명 찾기에 실패했습니다"));
 
     }
 
     protected String getCardVoice(Long cardId, byte gender, int age) {
-        CardVoice cardVoice = cardVoiceRepository.findById(cardId).orElseThrow(() -> new VoiceNotFoundException("TTS 음성이 존재하지 않습니다"));
+        CardVoice cardVoice = cardVoiceRepository.findById(cardId)
+                .orElseThrow(() -> new VoiceNotFoundException("TTS 음성이 존재하지 않습니다"));
 
         String voice = null;
         switch (gender) {

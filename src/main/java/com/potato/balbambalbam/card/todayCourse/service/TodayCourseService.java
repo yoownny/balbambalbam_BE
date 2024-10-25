@@ -31,7 +31,8 @@ public class TodayCourseService {
     public TodayCourseResponseDto getCardList(Long userId, TodayCourseRequestDto todayCourseRequestDto) {
         //1. 카드 레벨을 가져온다
         Integer courseSize = todayCourseRequestDto.getCourseSize();
-        UserLevel userLevel = userLevelRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다"));
+        UserLevel userLevel = userLevelRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다"));
 
         //2. 카드를 가져온다
         long categoryId = userLevel.getCategoryId();
@@ -56,9 +57,12 @@ public class TodayCourseService {
         int currentSize = 0;
         List<Long> todayCourseList = new ArrayList<>();
         while (currentSize < courseSize) {
-            List<Long> cardList = cardRepository.findAllByCategoryId(categoryId + (idx++)).stream().map(Card::getCardId).toList();
+            List<Long> cardList = cardRepository.findAllByCategoryId(categoryId + (idx++)).stream().map(Card::getCardId)
+                    .toList();
             Long nextCardId = getNextCardId(cardList, userCardList);
-            todayCourseList.addAll(cardList.stream().filter(id -> !userCardList.contains(id)).filter(id -> id >= nextCardId).limit(courseSize - currentSize).toList());
+            todayCourseList.addAll(
+                    cardList.stream().filter(id -> !userCardList.contains(id)).filter(id -> id >= nextCardId)
+                            .limit(courseSize - currentSize).toList());
             currentSize += todayCourseList.size();
             if (categoryId + idx > 25) {
                 break;
@@ -80,7 +84,8 @@ public class TodayCourseService {
 
     protected List<Long> getRandomCardList(Long userId, int courseSize) {
         List<Long> userCardList = cardScoreRepository.findByUserId(userId).stream().map(CardScore::getCardId).toList();
-        List<Long> cardList = cardRepository.findAll().stream().map(Card::getCardId).filter(id -> !userCardList.contains(id)).toList();
+        List<Long> cardList = cardRepository.findAll().stream().map(Card::getCardId)
+                .filter(id -> !userCardList.contains(id)).toList();
 
         return pickRandomCard(cardList, courseSize);
     }
