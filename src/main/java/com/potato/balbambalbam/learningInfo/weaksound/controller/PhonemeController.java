@@ -6,11 +6,11 @@ import com.potato.balbambalbam.data.entity.WeakSoundTestStatus;
 import com.potato.balbambalbam.data.repository.PhonemeRepository;
 import com.potato.balbambalbam.data.repository.UserWeakSoundRepository;
 import com.potato.balbambalbam.data.repository.WeakSoundTestSatusRepositoy;
-import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.exception.ResponseNotFoundException;
+import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.learningInfo.weaksound.dto.UserWeakSoundResponseDto;
-import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
+import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -40,11 +40,11 @@ public class PhonemeController {
     private final JWTUtil jwtUtil;
     private final WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy;
 
-    public PhonemeController (UserWeakSoundRepository userWeakSoundRepository,
-                              PhonemeRepository phonemeRepository,
-                              JoinService joinService,
-                              JWTUtil jwtUtil,
-                              WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy){
+    public PhonemeController(UserWeakSoundRepository userWeakSoundRepository,
+                             PhonemeRepository phonemeRepository,
+                             JoinService joinService,
+                             JWTUtil jwtUtil,
+                             WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy) {
         this.userWeakSoundRepository = userWeakSoundRepository;
         this.phonemeRepository = phonemeRepository;
         this.joinService = joinService;
@@ -63,7 +63,7 @@ public class PhonemeController {
             @ApiResponse(responseCode = "404", description = "테스트를 하지 않은 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
     })
     @GetMapping("/test/status")
-    public ResponseEntity<Boolean> getTestStatusByUserId(@RequestHeader("access") String access){
+    public ResponseEntity<Boolean> getTestStatusByUserId(@RequestHeader("access") String access) {
         Long userId = extractUserIdFromToken(access);
 
         WeakSoundTestStatus weakSoundTestStatus = weakSoundTestSatusRepositoy.findByUserId(userId);

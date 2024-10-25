@@ -3,9 +3,9 @@ package com.potato.balbambalbam.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.potato.balbambalbam.data.repository.RefreshRepository;
 import com.potato.balbambalbam.user.token.filter.CustomLogoutFilter;
+import com.potato.balbambalbam.user.token.filter.LoginFilter;
 import com.potato.balbambalbam.user.token.jwt.JWTFilter;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
-import com.potato.balbambalbam.user.token.filter.LoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -72,11 +72,11 @@ public class SecurityConfig {
 
         //로그인 필터 추가
         http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository,objectMapper), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository, objectMapper), UsernamePasswordAuthenticationFilter.class);
 
         //로그아웃 필터 추가
         http
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository,objectMapper), LogoutFilter.class);
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository, objectMapper), LogoutFilter.class);
 
         http
                 .sessionManagement((session) -> session

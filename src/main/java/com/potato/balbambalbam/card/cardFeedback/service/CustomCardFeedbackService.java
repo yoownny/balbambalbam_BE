@@ -1,12 +1,12 @@
 package com.potato.balbambalbam.card.cardFeedback.service;
 
-import com.potato.balbambalbam.data.entity.CustomCard;
-import com.potato.balbambalbam.data.repository.CustomCardRepository;
-import com.potato.balbambalbam.exception.CardNotFoundException;
 import com.potato.balbambalbam.card.cardFeedback.dto.AiFeedbackRequestDto;
 import com.potato.balbambalbam.card.cardFeedback.dto.AiFeedbackResponseDto;
 import com.potato.balbambalbam.card.cardFeedback.dto.UserFeedbackRequestDto;
 import com.potato.balbambalbam.card.cardFeedback.dto.UserFeedbackResponseDto;
+import com.potato.balbambalbam.data.entity.CustomCard;
+import com.potato.balbambalbam.data.repository.CustomCardRepository;
+import com.potato.balbambalbam.exception.CardNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,23 +33,23 @@ public class CustomCardFeedbackService {
 
         //학습카드 추천
         Map<Long, UserFeedbackResponseDto.RecommendCardInfo> recommendCard = new HashMap<>();
-        if(score == 100){
+        if (score == 100) {
             recommendCard.put(-100L, new UserFeedbackResponseDto.RecommendCardInfo("perfect"));
-        }else{
+        } else {
             recommendCard.put(-1L, new UserFeedbackResponseDto.RecommendCardInfo("not word"));
         }
 
         return setUserFeedbackResponseDto(aiFeedbackResponseDto, recommendCard, cardId);
     }
 
-    protected AiFeedbackResponseDto getAiFeedbackResponseDto (UserFeedbackRequestDto userFeedbackRequestDto, Long cardId, Long userId) {
+    protected AiFeedbackResponseDto getAiFeedbackResponseDto(UserFeedbackRequestDto userFeedbackRequestDto, Long cardId, Long userId) {
         AiFeedbackRequestDto aiFeedbackRequestDto = createAiFeedbackRequestDto(userFeedbackRequestDto, cardId, userId);
         AiFeedbackResponseDto aiFeedbackResponseDto = aiCardFeedbackService.postAiFeedback(aiFeedbackRequestDto);
 
         return aiFeedbackResponseDto;
     }
 
-    protected AiFeedbackRequestDto createAiFeedbackRequestDto (UserFeedbackRequestDto userFeedbackRequestDto, Long cardId, Long userId){
+    protected AiFeedbackRequestDto createAiFeedbackRequestDto(UserFeedbackRequestDto userFeedbackRequestDto, Long cardId, Long userId) {
         String pronunciation = customCardRepository.findCustomCardByIdAndUserId(cardId, userId).orElseThrow(() -> new CardNotFoundException("카드가 존재하지 않습니다")).getText();
         AiFeedbackRequestDto aiFeedbackRequestDto = new AiFeedbackRequestDto();
 
@@ -62,24 +62,24 @@ public class CustomCardFeedbackService {
 
     /**
      * 점수 업데이트
+     *
      * @param cardId
      * @param userScore
      */
 
-    public void updateScoreIfLarger(Long cardId, Integer userScore){
+    public void updateScoreIfLarger(Long cardId, Integer userScore) {
         CustomCard customCard = customCardRepository.findById(cardId).orElseThrow(() -> new CardNotFoundException("카드가 존재하지 않습니다"));
 
-        if(customCard.getHighestScore() == null){
+        if (customCard.getHighestScore() == null) {
             customCard.setHighestScore(userScore);
             customCardRepository.save(customCard);
-        }
-        else if(customCard.getHighestScore() < userScore){
+        } else if (customCard.getHighestScore() < userScore) {
             customCard.setHighestScore(userScore);
             customCardRepository.save(customCard);
         }
     }
 
-    protected UserFeedbackResponseDto setUserFeedbackResponseDto(AiFeedbackResponseDto aiFeedback, Map<Long, UserFeedbackResponseDto.RecommendCardInfo> recommendCard, Long cardId){
+    protected UserFeedbackResponseDto setUserFeedbackResponseDto(AiFeedbackResponseDto aiFeedback, Map<Long, UserFeedbackResponseDto.RecommendCardInfo> recommendCard, Long cardId) {
         //사용자 오디오 데이터 생성
         UserFeedbackResponseDto.UserAudio userAudio = new UserFeedbackResponseDto.UserAudio(aiFeedback.getUserText(), aiFeedback.getUserMistakenIndexes());
         //waveform 데이터 생성

@@ -7,8 +7,6 @@ import com.potato.balbambalbam.data.repository.CardScoreRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class LearningService {
@@ -17,16 +15,16 @@ public class LearningService {
     private final CardRepository cardRepository;
 
     public LearningService(CardScoreRepository cardScoreRepository,
-                           CardRepository cardRepository){
+                           CardRepository cardRepository) {
         this.cardScoreRepository = cardScoreRepository;
         this.cardRepository = cardRepository;
     }
 
-    public List<CardScore> findCardScoresByUserId(Long userId){
+    public List<CardScore> findCardScoresByUserId(Long userId) {
         return cardScoreRepository.findByUserId(userId);
     }
 
-    public List<Card> findAllCards(){
+    public List<Card> findAllCards() {
         return cardRepository.findAll();
     }
 

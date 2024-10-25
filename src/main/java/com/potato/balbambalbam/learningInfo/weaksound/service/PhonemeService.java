@@ -17,7 +17,7 @@ public class PhonemeService {
     private final PhonemeRepository phonemeRepository;
     private Map<Long, Map<Long, Integer>> temporaryStorage = new HashMap<>();
 
-    public PhonemeService (PhonemeRepository phonemeRepository){
+    public PhonemeService(PhonemeRepository phonemeRepository) {
         this.phonemeRepository = phonemeRepository;
     }
 

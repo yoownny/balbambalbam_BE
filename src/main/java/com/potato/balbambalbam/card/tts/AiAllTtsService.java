@@ -24,6 +24,7 @@ public class AiAllTtsService {
             .build();
     @Value("${ai.service.url}")
     private String AI_URL;
+
     public AiAllTtsResponseDto getAiTtsResponse(String text) {
         AiAllTtsRequestDto aiAllTtsRequestDto = new AiAllTtsRequestDto(text);
 
@@ -34,10 +35,10 @@ public class AiAllTtsService {
                 .retrieve()//요청
                 //에러 처리 : 요청이 잘못갔을 경우
                 .onStatus(HttpStatus.BAD_REQUEST::equals,
-                        response-> response.bodyToMono(String.class).map(InvalidParameterException::new))
+                        response -> response.bodyToMono(String.class).map(InvalidParameterException::new))
                 //에러 처리 : 발음생성실패
                 .onStatus(HttpStatus.INTERNAL_SERVER_ERROR::equals,
-                        response-> response.bodyToMono(String.class).map(AiGenerationFailException::new))
+                        response -> response.bodyToMono(String.class).map(AiGenerationFailException::new))
                 .bodyToMono(AiAllTtsResponseDto.class)
                 .timeout(Duration.ofSeconds(10)) //10초 안에 응답 오지 않으면 TimeoutException 발생
                 .block();

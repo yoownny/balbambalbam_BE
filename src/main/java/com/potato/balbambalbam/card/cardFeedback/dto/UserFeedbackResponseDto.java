@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @ToString
 public class UserFeedbackResponseDto {
     private Long cardId;
@@ -17,8 +18,10 @@ public class UserFeedbackResponseDto {
     private Integer userScore;
     private Map<Long, RecommendCardInfo> recommendCard;
     private Waveform waveform;
-    @Getter @Setter
-     public static class UserAudio{
+
+    @Getter
+    @Setter
+    public static class UserAudio {
         private String text;
 
         private List<Integer> mistakenIndexes;
@@ -29,8 +32,9 @@ public class UserFeedbackResponseDto {
         }
     }
 
-    @Getter @Setter
-    public static class Waveform{
+    @Getter
+    @Setter
+    public static class Waveform {
         private String userWaveform;
         private Double userAudioDuration;
         private String correctWaveform;
@@ -43,9 +47,11 @@ public class UserFeedbackResponseDto {
             this.correctAudioDuration = correctAudioDuration;
         }
     }
-    @Getter @Setter
+
+    @Getter
+    @Setter
     @ToString
-    public static class RecommendCardInfo{
+    public static class RecommendCardInfo {
 
         private String text;
         private String category;

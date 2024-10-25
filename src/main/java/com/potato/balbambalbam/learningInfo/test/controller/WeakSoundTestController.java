@@ -2,13 +2,13 @@ package com.potato.balbambalbam.learningInfo.test.controller;
 
 import com.potato.balbambalbam.data.entity.WeakSoundTest;
 import com.potato.balbambalbam.data.repository.WeakSoundTestRepository;
-import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.exception.InvalidParameterException;
 import com.potato.balbambalbam.exception.ParameterNotFoundException;
+import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.learningInfo.test.dto.WeakSoundTestListDto;
 import com.potato.balbambalbam.learningInfo.test.service.WeakSoundTestService;
-import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
+import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -38,7 +38,7 @@ public class WeakSoundTestController {
     public WeakSoundTestController(WeakSoundTestRepository weakSoundTestRepository,
                                    JoinService joinService,
                                    JWTUtil jwtUtil,
-                                   WeakSoundTestService weakSoundTestService){
+                                   WeakSoundTestService weakSoundTestService) {
         this.weakSoundTestRepository = weakSoundTestRepository;
         this.joinService = joinService;
         this.jwtUtil = jwtUtil;

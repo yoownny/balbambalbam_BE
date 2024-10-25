@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 @Controller
-@Slf4j @RequiredArgsConstructor
+@Slf4j
+@RequiredArgsConstructor
 public class CardInsertController {
     private final CardInsertService cardInsertService;
+
     //TODO : 개발자 권한을 가진 access토큰만 해당 url 요청을 할 수 있도록 해야함
     @GetMapping("/card/insert")
-    public ResponseEntity<Object> cardUpdateListener(@RequestHeader("access") String access){
+    public ResponseEntity<Object> cardUpdateListener(@RequestHeader("access") String access) {
         int cardListCnt = cardInsertService.updateCardRecordList();
         return ResponseEntity.ok("Total" + cardListCnt + "update success");
     }

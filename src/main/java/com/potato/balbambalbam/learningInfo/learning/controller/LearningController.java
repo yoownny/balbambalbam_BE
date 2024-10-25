@@ -4,8 +4,8 @@ import com.potato.balbambalbam.data.entity.Card;
 import com.potato.balbambalbam.data.entity.CardScore;
 import com.potato.balbambalbam.learningInfo.learning.dto.LearningResponseDto;
 import com.potato.balbambalbam.learningInfo.learning.service.LearningService;
-import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
+import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,16 +33,17 @@ public class LearningController {
     private final JoinService joinService;
     private final JWTUtil jwtUtil;
 
-    public LearningController (LearningService learningService,
-                               JoinService joinService,
-                               JWTUtil jwtUtil){
+    public LearningController(LearningService learningService,
+                              JoinService joinService,
+                              JWTUtil jwtUtil) {
         this.learningService = learningService;
         this.joinService = joinService;
         this.jwtUtil = jwtUtil;
     }
+
     private Long extractUserIdFromToken(String access) { // access 토큰으로부터 userId 추출하는 함수
-        String socialId = jwtUtil.getSocialId(access); 
-        return joinService.findUserBySocialId(socialId).getId(); 
+        String socialId = jwtUtil.getSocialId(access);
+        return joinService.findUserBySocialId(socialId).getId();
     }
 
     @Operation(summary = "사용자의 학습 진척도 조회", description = "사용자의 카테고리별 학습 진척도(%)를 제공한다.")
@@ -50,7 +51,7 @@ public class LearningController {
             @ApiResponse(responseCode = "200", description = "사용자의 학습 진척도를 가지고 온 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LearningResponseDto.class)))
     })
     @GetMapping("/learning/progress")
-    public ResponseEntity<LearningResponseDto> getLearningProgress(@RequestHeader("access") String access){
+    public ResponseEntity<LearningResponseDto> getLearningProgress(@RequestHeader("access") String access) {
         Long userId = extractUserIdFromToken(access);
 
         List<CardScore> scores = learningService.findCardScoresByUserId(userId); // 사용자 카드 중 점수를 받은 카드
