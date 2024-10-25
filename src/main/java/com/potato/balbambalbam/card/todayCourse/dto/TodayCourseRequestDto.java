@@ -9,5 +9,7 @@ import lombok.Setter;
 @Setter @NoArgsConstructor
 @Schema(description = "Today Course Request")
 public class CourseRequestDto {
+
+    @Schema(description = "학습 목표 개수", example = "30")
     Integer courseCnt;
 }

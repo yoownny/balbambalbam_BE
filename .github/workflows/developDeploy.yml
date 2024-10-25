@@ -64,6 +64,7 @@ jobs:
             cat ~/my_password.txt | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
             if [ "$(docker ps -qa)" ]; then
               docker rm -f $(docker ps -qa)
+              docker rmi $(docker images -q)
             else
               echo "No containers to remove."
             fi
