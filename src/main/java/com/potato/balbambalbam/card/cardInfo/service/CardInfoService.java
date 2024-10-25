@@ -1,19 +1,14 @@
 package com.potato.balbambalbam.card.cardInfo.service;
 
+import com.potato.balbambalbam.card.cardInfo.dto.CardInfoResponseDto;
 import com.potato.balbambalbam.data.entity.Card;
 import com.potato.balbambalbam.data.entity.CardVoice;
-import com.potato.balbambalbam.data.entity.CustomCard;
+import com.potato.balbambalbam.data.entity.PronunciationPicture;
 import com.potato.balbambalbam.data.entity.User;
-import com.potato.balbambalbam.data.repository.CardRepository;
-import com.potato.balbambalbam.data.repository.CardVoiceRepository;
-import com.potato.balbambalbam.data.repository.CustomCardRepository;
-import com.potato.balbambalbam.data.repository.UserRepository;
+import com.potato.balbambalbam.data.repository.*;
 import com.potato.balbambalbam.exception.CardNotFoundException;
 import com.potato.balbambalbam.exception.UserNotFoundException;
 import com.potato.balbambalbam.exception.VoiceNotFoundException;
-import com.potato.balbambalbam.card.cardInfo.dto.AiTtsRequestDto;
-import com.potato.balbambalbam.card.cardInfo.dto.AiTtsResponseDto;
-import com.potato.balbambalbam.card.cardInfo.dto.CardInfoResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,65 +20,54 @@ public class CardInfoService {
 
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
-    private final AiTtsService aiTtsService;
-    private final CustomCardRepository customCardRepository;
+    private final CardWeakSoundRepository cardWeakSoundRepository;
     private final CardVoiceRepository cardVoiceRepository;
+    private final PronunciationPictureRepository pronunciationPictureRepository;
 
     public CardInfoResponseDto getCardInfo(Long userId, Long cardId) {
-        AiTtsRequestDto aiTtsRequestDto = getAiTtsRequestDto(userId, getCardText(cardId));
-        return getCardVoice(cardId, aiTtsRequestDto);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User가 존재하지 않습니다"));
+
+        String cardVoice = getCardVoice(cardId, user.getGender(), user.getAge());
+        return getCardInfoResponseDto(userId, cardId, cardVoice);
     }
 
-    public CardInfoResponseDto getCustomCardInfo(Long userId, Long cardId) {
-        return createCardVoice(getAiTtsRequestDto(userId, getCustomCardText(cardId, userId)));
-
-    }
-
-    /**
-     * 일반 카드 text 추출
-     */
-    protected String getCardText(Long cardId){
+    protected CardInfoResponseDto getCardInfoResponseDto(Long userId, Long cardId, String voice) {
         Card card = cardRepository.findById(cardId).orElseThrow(() -> new CardNotFoundException("잘못된 URL 요청입니다"));
-        return card.getText();
+
+        CardInfoResponseDto cardInfoResponseDto = CardInfoResponseDto.builder()
+                .id(card.getCardId())
+                .text(card.getText())
+                .cardPronunciation(card.getCardPronunciation())
+                .cardTranslation(card.getCardTranslation())
+                .isWeakCard(cardWeakSoundRepository.existsByCardIdAndUserId(cardId, userId))
+                .correctAudio(voice)
+                .build();
+
+        if (card.getCategoryId() <= 1) {
+            PronunciationPicture pronunciationInfo = getPictureAndExplanation(card);
+            cardInfoResponseDto.setExplanation(pronunciationInfo.getExplanation());
+            cardInfoResponseDto.setPictureUrl("/images/" + pronunciationInfo.getPhonemeId() + ".png");
+        }
+        //TODO : 받침 그림 추가 시 받침도 그림 전송
+
+        return cardInfoResponseDto;
     }
 
-    /**
-     * 커스텀 카드 text 추출
-     */
-    protected String getCustomCardText (Long cardId, Long userId){
-        CustomCard card = customCardRepository.findCustomCardByIdAndUserId(cardId, userId).orElseThrow(() -> new CardNotFoundException("잘못된 URL 요청입니다"));
-        return card.getText();
+    protected PronunciationPicture getPictureAndExplanation(Card card) {
+        Long phonemeId = null;
+        //모음인 경우
+        if (card.getCardId() <= 27) {
+            phonemeId = card.getPhonemesMap().get(1);
+        }
+        //자음인 경우
+        else {
+            phonemeId = card.getPhonemesMap().get(0);
+        }
+        return pronunciationPictureRepository.findByPhonemeId(phonemeId).orElseThrow(() -> new IllegalArgumentException("음절 설명 찾기에 실패했습니다"));
+
     }
 
-    /**
-     * ai 서버로 부터 tts 받아서 dto 생성
-     */
-    protected AiTtsRequestDto getAiTtsRequestDto(Long userId, String text){
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다"));
-        Integer age = user.getAge();
-        Byte gender = user.getGender();
-
-        return new AiTtsRequestDto(age, gender, text);
-    }
-
-    /**
-     * 프론트로 전달해줄 customCard용 cardInfoResponseDto 생성
-     */
-    protected CardInfoResponseDto createCardVoice (AiTtsRequestDto aiTtsRequestDto) {
-        AiTtsResponseDto aiTtsResponseDto = aiTtsService.getTtsVoice(aiTtsRequestDto);
-
-        String correctAudio = aiTtsResponseDto.getCorrectAudio();
-
-        return new CardInfoResponseDto(correctAudio);
-    }
-
-    /**
-     * 프론트로 전달해줄 일반 Card용 cardInfoResponseDto 생성
-     */
-    protected CardInfoResponseDto getCardVoice (Long cardId, AiTtsRequestDto aiTtsRequestDto) {
-        Byte gender = aiTtsRequestDto.getGender();
-        Integer age = aiTtsRequestDto.getAge();
-
+    protected String getCardVoice(Long cardId, byte gender, int age) {
         CardVoice cardVoice = cardVoiceRepository.findById(cardId).orElseThrow(() -> new VoiceNotFoundException("TTS 음성이 존재하지 않습니다"));
 
         String voice = null;
@@ -92,7 +76,7 @@ public class CardInfoService {
             case (0): {
                 if (age <= 14) {// 아이
                     voice = cardVoice.getChildMale();
-                } else if(age <= 40) { // 청년
+                } else if (age <= 40) { // 청년
                     voice = cardVoice.getAdultMale();
                 } else { //중장년
                     voice = cardVoice.getElderlyMale();
@@ -100,10 +84,10 @@ public class CardInfoService {
                 break;
             }
             // 여자
-            case (1) : {
-                if(age <= 14) { // 아이
+            case (1): {
+                if (age <= 14) { // 아이
                     voice = cardVoice.getChildFemale();
-                } else if(age <= 40) { // 청년
+                } else if (age <= 40) { // 청년
                     voice = cardVoice.getAdultFemale();
                 } else { // 중장년
                     voice = cardVoice.getElderlyFemale();
@@ -112,7 +96,6 @@ public class CardInfoService {
             }
         }
 
-        return new CardInfoResponseDto(voice);
+        return voice;
     }
-
 }
