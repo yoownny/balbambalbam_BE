@@ -59,8 +59,8 @@ public class HomeInfoService {
         Level level = levelRepository.findByLevelId(userLevel.getLevelId());
 
         homeInfoDto.setUserLevel(level.getLevel());
-        homeInfoDto.setLevelExperience((int) level.getLevelExperience());
-        homeInfoDto.setUserExperience((int) userLevel.getUserExperience());
+        homeInfoDto.setLevelExperience(level.getLevelExperience());  // 캐스팅 제거
+        homeInfoDto.setUserExperience(userLevel.getUserExperience());
     }
 
     private void setUserAttendanceInfo(Long userId, HomeInfoDto homeInfoDto) {
@@ -84,7 +84,7 @@ public class HomeInfoService {
 
     private void setDailyWordInfo(Long userId, HomeInfoDto homeInfoDto) {
         // TODO: 실제 일일 단어 서비스 구현 시 이 부분 수정 필요
-        homeInfoDto.setCategoryId(1);
+        homeInfoDto.setCategoryId(1L);
         homeInfoDto.setDailyWord("든든해");
         homeInfoDto.setDailyWordMeaning("reliable");
     }

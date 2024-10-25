@@ -52,8 +52,9 @@ public class JoinService {
         // 사용자 레벨 데이터베이스에 저장
         UserLevel userLevel = new UserLevel();
         userLevel.setUserId(savedUser.getId());
-        userLevel.setUserExperience(0);
-        userLevel.setLevelId(1);
+        userLevel.setUserExperience(0L);
+        userLevel.setLevelId(1L);
+        userLevel.setCategoryId(1L);
         userLevelRepository.save(userLevel);
 
         // access 토큰 발급
@@ -126,8 +127,11 @@ public class JoinService {
         if (weakSoundTestSatusRepositoy.existsByUserId(userId)) {
             weakSoundTestSatusRepositoy.deleteByUserId(userId);
         }
+        if (userLevelRepository.existsByUserId(userId)) {  // existsById 대신 existsByUserId 사용
+            userLevelRepository.deleteByUserId(userId);    // deleteById 대신 deleteByUserId 사용
+        }
 
-        userLevelRepository.deleteById(userId);
+        //userLevelRepository.deleteById(userId);
         refreshRepository.deleteBySocialId(user.getSocialId());
         userRepository.deleteById(userId);
     }

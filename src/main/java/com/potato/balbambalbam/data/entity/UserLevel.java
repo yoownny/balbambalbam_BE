@@ -15,10 +15,12 @@ public class UserLevel {
     @Column(name = "user_id")
     private Long userId;
     @Column(name = "level_id")
-    private long levelId;
+    private Long levelId;
     @Column(name = "user_experience")
-    private long userExperience;
+    private Long userExperience;
+    @Column(name = "category_id")
+    private Long categoryId;
 
-    public UserLevel(){
+    public UserLevel() {
     }
 }
