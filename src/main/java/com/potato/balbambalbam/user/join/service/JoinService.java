@@ -111,35 +111,35 @@ public class JoinService {
 
     //회원정보 삭제
     @Transactional
-    public void deleteUser(Long userId, String name) {
+    public void deleteUser(Long userId, String name){
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); //404
 
-        if (!user.getName().equals(name)) {
+        if(!user.getName().equals(name)){
             throw new InvalidUserNameException("닉네임이 일치하지 않습니다."); //400
         }
 
 
-        if (cardBookmarkRepository.existsByUserId(userId)) {
+        if(cardBookmarkRepository.existsByUserId(userId)){
             cardBookmarkRepository.deleteByUserId(userId);
 
         }
-        if (cardScoreRepository.existsByUserId(userId)) {
+        if(cardScoreRepository.existsByUserId(userId)){
             cardScoreRepository.deleteByUserId(userId);
         }
-        if (cardWeakSoundRepository.existsByUserId(userId)) {
+        if(cardWeakSoundRepository.existsByUserId(userId)){
             cardWeakSoundRepository.deleteByUserId(userId);
 
         }
-        if (customCardRepository.existsByUserId(userId)) {
+        if(customCardRepository.existsByUserId(userId)){
             customCardRepository.deleteUserById(userId);
         }
-        if (userWeakSoundRepository.existsByUserId(userId)) {
+        if(userWeakSoundRepository.existsByUserId(userId)){
             userWeakSoundRepository.deleteByUserId(userId);
 
         }
-        if (weakSoundTestSatusRepositoy.existsByUserId(userId)) {
+        if(weakSoundTestSatusRepositoy.existsByUserId(userId)){
             weakSoundTestSatusRepositoy.deleteByUserId(userId);
         }
 
@@ -151,7 +151,7 @@ public class JoinService {
     }
 
     //회원정보 검색
-    public EditResponseDto findUserById(Long userId) {
+    public EditResponseDto findUserById(Long userId){
         User editUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); //404
         return new EditResponseDto(editUser.getName(), editUser.getAge(), editUser.getGender());

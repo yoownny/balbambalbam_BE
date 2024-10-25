@@ -19,17 +19,17 @@ public class WeakSoundTestAiService {
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
     private final PhonemeService phonemeService;
-    @Value("${ai.service.url}")
-    private String AI_URL;
-
     public WeakSoundTestAiService(WebClient.Builder webClientBuilder,
                                   @Value("${ai.service.url}") String aiServiceUrl,
                                   ObjectMapper objectMapper,
-                                  PhonemeService phonemeService) {
+                                  PhonemeService phonemeService){
         this.webClient = webClientBuilder.baseUrl(aiServiceUrl).build();
-        this.objectMapper = objectMapper;
+        this.objectMapper=objectMapper;
         this.phonemeService = phonemeService;
     }
+
+    @Value("${ai.service.url}")
+    private String AI_URL;
 
     public TestResponseDto sendToAi(Long userId, Map<String, Object> dataToSend) throws JsonProcessingException {
         String testRequestJson = objectMapper.writeValueAsString(dataToSend); // dataToSend -> testRequestJson <Json>

@@ -2,7 +2,7 @@ package com.potato.balbambalbam.user.token.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.potato.balbambalbam.data.entity.User;
-import com.potato.balbambalbam.exception.dto.ExceptionDto;
+import com.potato.balbambalbam.log.dto.ExceptionDto;
 import com.potato.balbambalbam.user.token.service.CustomUserDetails;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -59,7 +59,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
     private void sendError(HttpServletResponse response, int statusCode, String exceptionName, String message) throws IOException {
         ExceptionDto exceptionDto = new ExceptionDto(statusCode, exceptionName, message);
         response.setStatus(statusCode);
