@@ -3,6 +3,7 @@ package com.potato.balbambalbam.user.home.service;
 import com.potato.balbambalbam.data.entity.Level;
 import com.potato.balbambalbam.data.entity.UserAttendance;
 import com.potato.balbambalbam.data.entity.UserLevel;
+import com.potato.balbambalbam.data.repository.CardBookmarkRepository;
 import com.potato.balbambalbam.data.repository.LevelRepository;
 import com.potato.balbambalbam.data.repository.UserAttendanceRepository;
 import com.potato.balbambalbam.data.repository.UserLevelRepository;
@@ -83,9 +84,9 @@ public class HomeInfoService {
 
     private void setDailyWordInfo(Long userId, HomeInfoDto homeInfoDto) {
         // TODO: 실제 일일 단어 서비스 구현 시 이 부분 수정 필요
+        homeInfoDto.setCategoryId(1);
         homeInfoDto.setDailyWord("든든해");
         homeInfoDto.setDailyWordMeaning("reliable");
-        homeInfoDto.setIsBookmarked(false);
     }
 
 }
