@@ -1,7 +1,8 @@
 package com.potato.balbambalbam.card.todayCourse.controller;
 
-import com.potato.balbambalbam.card.todayCourse.dto.TodayCourseRequestDto;
-import com.potato.balbambalbam.card.todayCourse.dto.TodayCourseResponseDto;
+import com.potato.balbambalbam.home.learningCourse.dto.ResponseCardDto;
+import com.potato.balbambalbam.card.todayCourse.dto.CourseRequestDto;
+import com.potato.balbambalbam.card.todayCourse.dto.CourseResponseDto;
 import com.potato.balbambalbam.card.todayCourse.service.TodayCourseService;
 import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.user.join.service.JoinService;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -29,17 +32,18 @@ public class TodayCourseController {
     private final JoinService joinService;
     private final JWTUtil jwtUtil;
 
-    @PostMapping("/cards/today-course")
+    @PostMapping ("/cards/today-course")
     @Operation(summary = "todayCourse 요청", description = "사용자의 레벨과 요청 개수에 맞는 카드 리스트를 제공한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK : 카드리스트 제공", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "ERROR : 존재하지 않는 카테고리 조회", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    public ResponseEntity<TodayCourseResponseDto> getCardList(@RequestBody TodayCourseRequestDto requestDto,
-                                                              @RequestHeader("access") String access) {
+    public ResponseEntity<CourseResponseDto<List<ResponseCardDto>>> getCardList(@RequestBody CourseRequestDto requestDto,
+                                                                                  @RequestHeader("access") String access){
         Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
 
-        TodayCourseResponseDto response = todayCourseService.getCardList(userId, requestDto);
+        List<ResponseCardDto> cardDtoList = todayCourseService.getCardList(requestDto);
+        CourseResponseDto<List<ResponseCardDto>> response = new CourseResponseDto<>(cardDtoList, cardDtoList.size());
 
         return ResponseEntity.ok().body(response);
 

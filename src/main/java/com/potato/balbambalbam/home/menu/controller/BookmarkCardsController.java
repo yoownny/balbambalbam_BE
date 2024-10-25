@@ -1,8 +1,8 @@
-package com.potato.balbambalbam.home.menu.controller;
+package com.potato.balbambalbam.home.bookmarkCards.controller;
 
+import com.potato.balbambalbam.home.bookmarkCards.dto.BookmarkCardResponseDto;
+import com.potato.balbambalbam.home.missedCards.dto.CardDto;
 import com.potato.balbambalbam.exception.dto.ExceptionDto;
-import com.potato.balbambalbam.home.menu.dto.BookmarkCardResponseDto;
-import com.potato.balbambalbam.home.menu.service.BookmarkCardsService;
 import com.potato.balbambalbam.user.join.service.JoinService;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,10 +35,12 @@ public class BookmarkCardsController {
             @ApiResponse(responseCode = "200", description = "OK : 카드리스트 조회", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "ERROR : 존재하지 않는 카테고리 조회", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    public ResponseEntity<BookmarkCardResponseDto> getCardList(@RequestHeader("access") String access) {
+    public ResponseEntity<BookmarkCardResponseDto<List<CardDto>>> getCardList(@RequestHeader("access") String access){
         Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
 
-        BookmarkCardResponseDto responseDto = bookmarkCardsService.getCards(userId);
+        List<CardDto> cardDtoList = bookmarkCardsService.getCards(userId);
+        BookmarkCardResponseDto<List<CardDto>> responseDto = new BookmarkCardResponseDto<>(cardDtoList, cardDtoList.size());
+
         return ResponseEntity.ok().body(responseDto);
     }
 }

@@ -2,7 +2,7 @@ package com.potato.balbambalbam.user.token.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.potato.balbambalbam.data.entity.User;
-import com.potato.balbambalbam.log.dto.ExceptionDto;
+import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.user.token.service.CustomUserDetails;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -42,6 +42,7 @@ public class JWTFilter extends OncePerRequestFilter {
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
+            System.out.println("Token validation error: " + e.getMessage());
             sendError(response, HttpServletResponse.SC_UNAUTHORIZED, "ExpiredJwtException", "access 토큰이 만료되었습니다."); //401
             return;
         }
