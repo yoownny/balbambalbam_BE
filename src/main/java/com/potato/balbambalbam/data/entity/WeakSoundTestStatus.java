@@ -3,10 +3,10 @@ package com.potato.balbambalbam.data.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity(name = "weaksound_test_status")
-@Getter @NoArgsConstructor
+@Getter
+@NoArgsConstructor
 public class WeakSoundTestStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -18,7 +18,9 @@ public class Level {
     private String level;
     @Column(name = "level_experience")
     private long levelExperience;
+    @Column(name = "category_id")
+    private long categoryId;
 
-    public Level(){
+    public Level() {
     }
 }

@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface CustomCardRepository extends JpaRepository<CustomCard, Long> {
     List<CustomCard> findAllByUserId(Long userId);
+
     @Override
     Optional<CustomCard> findById(Long cardId);
 
@@ -17,6 +18,8 @@ public interface CustomCardRepository extends JpaRepository<CustomCard, Long> {
 
     @Override
     boolean existsById(Long aLong);
+
     void deleteUserById(Long userId);
+
     boolean existsByUserId(Long userId);
 }

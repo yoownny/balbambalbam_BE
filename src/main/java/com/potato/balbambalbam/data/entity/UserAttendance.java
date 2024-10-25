@@ -1,6 +1,8 @@
 package com.potato.balbambalbam.data.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +20,7 @@ public class UserAttendance {
     private LocalDate attendanceDate;
     @Column(name = "is_present", nullable = false)
     private Boolean isPresent;
+
     public UserAttendance() {
     }
 }
