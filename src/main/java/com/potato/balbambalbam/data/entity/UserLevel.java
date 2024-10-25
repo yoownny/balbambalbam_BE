@@ -8,23 +8,18 @@ import lombok.Setter;
 
 @Entity(name = "user_level")
 @Getter
+@Setter
 public class UserLevel {
 
     @Id
     @Column(name = "user_id")
     private Long userId;
-
-    @Setter
     @Column(name = "level_id")
-    private long levelId;
-
-    @Setter
+    private Long levelId;
     @Column(name = "user_experience")
-    private long userExperience;
-
-    @Setter
+    private Long userExperience;
     @Column(name = "category_id")
-    private long categoryId;
+    private Long categoryId;
 
     public UserLevel() {
     }

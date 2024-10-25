@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -53,13 +54,15 @@ public class HomeInfoService {
         }
     }
 
-    // 사용자 레벨 정보
     private void setUserLevelInfo(Long userId, HomeInfoDto homeInfoDto) {
-        UserLevel userLevel = userLevelRepository.findByUserId(userId);
-        Level level = levelRepository.findByLevelId(userLevel.getLevelId());
+        UserLevel userLevel = userLevelRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User level not found for user: " + userId));
+
+        Level level = levelRepository.findByLevelId(userLevel.getLevelId())
+                .orElseThrow(() -> new RuntimeException("Level not found for levelId: " + userLevel.getLevelId()));
 
         homeInfoDto.setUserLevel(level.getLevel());
-        homeInfoDto.setLevelExperience(level.getLevelExperience());  // 캐스팅 제거
+        homeInfoDto.setLevelExperience(level.getLevelExperience());
         homeInfoDto.setUserExperience(userLevel.getUserExperience());
     }
 
