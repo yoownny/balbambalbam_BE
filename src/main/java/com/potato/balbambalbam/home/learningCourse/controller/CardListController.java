@@ -4,8 +4,8 @@ import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.home.learningCourse.dto.CardListResponseDto;
 import com.potato.balbambalbam.home.learningCourse.dto.ResponseCardDto;
 import com.potato.balbambalbam.home.learningCourse.service.CardListService;
-import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
+import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,14 +28,14 @@ public class CardListController {
     private final JoinService joinService;
     private final JWTUtil jwtUtil;
 
-    @GetMapping ("/home/course/{level}")
+    @GetMapping("/home/course/{level}")
     @Operation(summary = "CardList 조회", description = "레벨에 맞는 카테고리의 카드 리스트를 조회한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK : 카드리스트 조회", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "ERROR : 존재하지 않는 카테고리 조회", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     public ResponseEntity<CardListResponseDto<List<ResponseCardDto>>> getCardList(@RequestParam("level") Long level,
-                                                                                  @RequestHeader("access") String access){
+                                                                                  @RequestHeader("access") String access) {
         Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
 
         List<ResponseCardDto> cardDtoList = cardListService.getCardsByCategory(level, userId);
@@ -45,16 +45,16 @@ public class CardListController {
 
     }
 
-//    @GetMapping("/cards/bookmark/{cardId}")
-//    @Operation(summary = "Card Bookmark 갱신", description = "해당 카드의 북마크 on / off")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "OK : 북마크 UPDATE(있으면 삭제 없으면 추가)", useReturnTypeSchema = true),
-//            @ApiResponse(responseCode = "400", description = "ERROR : 존재하지 않는 카드", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
-//    })
-//    public ResponseEntity updateCardBookmark(@PathVariable("cardId") Integer cardId, @RequestHeader("access") String access){
-//        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
-//
-//        String message = cardListService.toggleCardBookmark(Long.valueOf(cardId), userId);
-//        return ResponseEntity.ok().body(message);
-//    }
+    @GetMapping("/cards/bookmark/{cardId}")
+    @Operation(summary = "Card Bookmark 갱신", description = "해당 카드의 북마크 on / off")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK : 북마크 UPDATE(있으면 삭제 없으면 추가)", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "400", description = "ERROR : 존재하지 않는 카드", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    public ResponseEntity updateCardBookmark(@PathVariable("cardId") Integer cardId, @RequestHeader("access") String access) {
+        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+
+        String message = cardListService.toggleCardBookmark(Long.valueOf(cardId), userId);
+        return ResponseEntity.ok().body(message);
+    }
 }
