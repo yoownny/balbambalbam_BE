@@ -1,22 +1,22 @@
 package com.potato.balbambalbam.card.cardFeedback.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.potato.balbambalbam.data.entity.CardScore;
-import com.potato.balbambalbam.data.repository.CardRepository;
-import com.potato.balbambalbam.data.repository.CardScoreRepository;
-import com.potato.balbambalbam.data.repository.CategoryRepository;
-import com.potato.balbambalbam.data.repository.PhonemeRepository;
-import com.potato.balbambalbam.exception.CardNotFoundException;
 import com.potato.balbambalbam.card.cardFeedback.dto.AiFeedbackRequestDto;
 import com.potato.balbambalbam.card.cardFeedback.dto.AiFeedbackResponseDto;
 import com.potato.balbambalbam.card.cardFeedback.dto.UserFeedbackRequestDto;
 import com.potato.balbambalbam.card.cardFeedback.dto.UserFeedbackResponseDto;
+import com.potato.balbambalbam.data.entity.CardScore;
+import com.potato.balbambalbam.data.entity.UserLevel;
+import com.potato.balbambalbam.data.repository.*;
+import com.potato.balbambalbam.exception.CardNotFoundException;
+import com.potato.balbambalbam.exception.UserNotFoundException;
 import com.potato.balbambalbam.home.learningCourse.service.UpdatePhonemeService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
@@ -28,6 +28,7 @@ public class CardFeedbackService {
     private final CardRepository cardRepository;
     private final CardScoreRepository cardScoreRepository;
     private final AiCardFeedbackService aiCardFeedbackService;
+    private final UserLevelRepository userLevelRepository;
     private final PhonemeRepository phonemeRepository;
     private final UpdatePhonemeService updatePhonemeService;
     private final CategoryRepository categoryRepository;
@@ -42,11 +43,33 @@ public class CardFeedbackService {
             updateScoreIfLarger(userId, cardId, aiFeedbackResponseDto.getUserAccuracy());
         }
 
+        //경험치 업데이트
+        updateUserExperience(userId, cardId);
+
         //학습카드 추천
         //Map<Long, UserFeedbackResponseDto.RecommendCardInfo> recommendCard = createRecommendCard(aiFeedbackResponseDto, categoryId);
         Map<Long, UserFeedbackResponseDto.RecommendCardInfo> recommendCard = null;
 
         return setUserFeedbackResponseDto(cardId, aiFeedbackResponseDto, recommendCard);
+    }
+
+    /**
+     * 유저 경험치 update
+     *
+     * @param userId
+     * @param cardId
+     */
+    @Transactional
+    protected void updateUserExperience(Long userId, Long cardId) {
+        UserLevel userLevel = userLevelRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다"));
+        Long categoryId = cardRepository.findByCardId(cardId).orElseThrow(() -> new CardNotFoundException("존재하지 않는 카드입니다.")).getCategoryId();
+
+        int experience = 0;
+        if (categoryId < 5) experience = 1;
+        else if (categoryId < 15) experience = 5;
+        else experience = 10;
+        userLevel.setUserExperience(userLevel.getUserExperience() + experience);
+        userLevelRepository.save(userLevel);
     }
 
     /**
@@ -82,6 +105,7 @@ public class CardFeedbackService {
      * @param cardId
      * @param userScore
      */
+    @Transactional
     public void updateScoreIfLarger(Long userId, Long cardId, Integer userScore) {
         Optional<CardScore> optionalCardScore = cardScoreRepository.findByCardIdAndUserId(cardId, userId);
 
@@ -89,10 +113,11 @@ public class CardFeedbackService {
             CardScore cardScore = optionalCardScore.get();
             if (cardScore.getHighestScore() < userScore) {
                 cardScore.setHighestScore(userScore);
+                cardScore.setTimeStamp(LocalDateTime.now());
                 cardScoreRepository.save(cardScore);
             }
         } else {
-            cardScoreRepository.save(new CardScore(userScore, userId, cardId));
+            cardScoreRepository.save(new CardScore(userScore, userId, cardId, LocalDateTime.now()));
         }
     }
 
