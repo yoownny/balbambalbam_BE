@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface TodayCardRepository extends JpaRepository<TodayCard, Long> {
     @Override
     Optional<TodayCard> findById(Long aLong);
+
 }
