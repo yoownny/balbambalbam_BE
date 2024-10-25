@@ -26,24 +26,25 @@ public class CardListService {
 
     /**
      * controller getCardList 요청 처리
+     *
      * @return cardDtoList
      */
-    public List<ResponseCardDto> getCardsByCategory(Long categoryId, Long userId){
+    public List<ResponseCardDto> getCardsByCategory(Long categoryId, Long userId) {
         List<ResponseCardDto> cardDtoList = createCardDtoListForCategory(categoryId, userId);
 
         return cardDtoList;
     }
 
-    public List<ResponseCardDto> getCustomCards(Long userId){
+    public List<ResponseCardDto> getCustomCards(Long userId) {
         List<CustomCard> customCardList = customCardRepository.findAllByUserId(userId);
         List<ResponseCardDto> cardDtoList = new ArrayList<>();
 
         customCardList.forEach(customCard -> {
-                int highestScore = (customCard.getHighestScore() == null) ? 0 : customCard.getHighestScore();
-                cardDtoList.add(new ResponseCardDto
-                (customCard.getId(), customCard.getText(), customCard.getEngTranslation(), customCard.getEngPronunciation(),
-                        customCard.getIsBookmarked(), false, highestScore,
-                        null, null ));
+            int highestScore = (customCard.getHighestScore() == null) ? 0 : customCard.getHighestScore();
+            cardDtoList.add(new ResponseCardDto
+                    (customCard.getId(), customCard.getText(), customCard.getEngTranslation(), customCard.getEngPronunciation(),
+                            customCard.getIsBookmarked(), false, highestScore,
+                            null, null));
         });
 
         return cardDtoList;
@@ -52,7 +53,7 @@ public class CardListService {
     /**
      * 카테고리에 맞는 카드 DTO 리스트 반환
      */
-    protected List<ResponseCardDto> createCardDtoListForCategory(Long categoryId, Long userId){
+    protected List<ResponseCardDto> createCardDtoListForCategory(Long categoryId, Long userId) {
         List<Card> cardList = cardRepository.findAllByCategoryId(categoryId);
         List<ResponseCardDto> cardDtoList = new ArrayList<>();
 
@@ -63,10 +64,11 @@ public class CardListService {
 
     /**
      * Card Entity를 ResponseCardDto에 맞게 변환
+     *
      * @param card
      * @return
      */
-    protected ResponseCardDto convertCardToDto(Card card, Long userId){
+    protected ResponseCardDto convertCardToDto(Card card, Long userId) {
         ResponseCardDto responseCardDto = new ResponseCardDto();
 
         Long cardId = card.getCardId();
@@ -80,20 +82,20 @@ public class CardListService {
         responseCardDto.setEngPronunciation(card.getCardPronunciation());
 
         //level 1 이라면 사진과 설명 제공
-        if(card.getCategoryId() == 1){
+        if (card.getCategoryId() == 1) {
             Long phonemeId = null;
             //모음인 경우
-            if(card.getCardId() <= 26){
+            if (card.getCardId() <= 26) {
                 phonemeId = card.getPhonemesMap().get(1);
             }
             //자음인 경우
-            else{
+            else {
                 phonemeId = card.getPhonemesMap().get(0);
             }
             PronunciationPicture pronunciationPicture = pronunciationPictureRepository.findByPhonemeId(phonemeId).orElseThrow(() -> new IllegalArgumentException("음절 설명 찾기에 실패했습니다"));
-            responseCardDto.setPictureUrl("/images/"+phonemeId+".png");
+            responseCardDto.setPictureUrl("/images/" + phonemeId + ".png");
             responseCardDto.setExplanation(pronunciationPicture.getExplanation());
-        }else{
+        } else {
             responseCardDto.setPictureUrl(null);
             responseCardDto.setExplanation(null);
         }
@@ -103,30 +105,31 @@ public class CardListService {
 
     /**
      * 카드 북마크 업데이트
+     *
      * @param cardId
      * @param userId
      */
-    public String toggleCardBookmark(Long cardId, Long userId){
-        cardRepository.findById(cardId).orElseThrow(()->new CardNotFoundException("존재하지 않는 카드입니다."));
+    public String toggleCardBookmark(Long cardId, Long userId) {
+        cardRepository.findById(cardId).orElseThrow(() -> new CardNotFoundException("존재하지 않는 카드입니다."));
 
-        if(cardBookmarkRepository.existsByCardIdAndUserId(cardId, userId)){
+        if (cardBookmarkRepository.existsByCardIdAndUserId(cardId, userId)) {
             cardBookmarkRepository.deleteByCardIdAndUserId(cardId, userId);
             return cardId + "번 카드 북마크 제거";
-        }else{
+        } else {
             CardBookmark cardBookmark = new CardBookmark(userId, cardId);
             cardBookmarkRepository.save(cardBookmark);
             return cardId + "번 카드 북마크 추가";
         }
     }
 
-    public String toggleCustomCardBookmark(Long cardId){
+    public String toggleCustomCardBookmark(Long cardId) {
         CustomCard customCard = customCardRepository.findById(cardId).orElseThrow(() -> new CardNotFoundException("존재하지 않는 카드입니다."));
 
-        if(customCard.getIsBookmarked()){
+        if (customCard.getIsBookmarked()) {
             customCard.setIsBookmarked(false);
             customCardRepository.save(customCard);
             return cardId + "번 카드 북마크 제거";
-        }else{
+        } else {
             customCard.setIsBookmarked(true);
             customCardRepository.save(customCard);
             return cardId + "번 카드 북마크 추가";

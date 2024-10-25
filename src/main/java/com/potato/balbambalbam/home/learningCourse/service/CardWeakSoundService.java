@@ -23,13 +23,15 @@ public class CardWeakSoundService {
     private final BulkRepository bulkRepository;
     private final CardRepository cardRepository;
     private final UserWeakSoundRepository userWeakSoundRepository;
+
     /**
      * 취약음 갱신 시 user weaksound table update
+     *
      * @param userId
      * @return
      */
     @Transactional
-    public String updateCardWeakSound(Long userId){
+    public String updateCardWeakSound(Long userId) {
         //card weaksound 테이블 해당 userId 행 전부 삭제
         bulkRepository.deleteAllByUserId(userId);
 
@@ -40,8 +42,8 @@ public class CardWeakSoundService {
         List<CardWeakSound> cardWeakSoundList = new ArrayList<>();
         cardList.forEach(card -> {
             List<Long> phonemes = card.getPhonemesMap();
-            if(!Collections.disjoint(phonemes, phonemeList)){
-                cardWeakSoundList.add(new CardWeakSound(userId ,card.getCardId()));
+            if (!Collections.disjoint(phonemes, phonemeList)) {
+                cardWeakSoundList.add(new CardWeakSound(userId, card.getCardId()));
             }
         });
         bulkRepository.saveAll(cardWeakSoundList);
@@ -49,7 +51,7 @@ public class CardWeakSoundService {
         return "카드 취약음 갱신 성공";
     }
 
-    protected List<Card> getCardListWithoutSentence(){
+    protected List<Card> getCardListWithoutSentence() {
         List<Long> categoryIds = Arrays.asList(
                 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L,
                 14L, 15L, 16L, 17L, 18L, 19L, 20L, 21L, 22L,
@@ -60,7 +62,7 @@ public class CardWeakSoundService {
         return cardList;
     }
 
-    protected List<Long> getPhonemeList(Long userId){
+    protected List<Long> getPhonemeList(Long userId) {
         List<UserWeakSound> userWeakSoundList = userWeakSoundRepository.findAllByUserId(userId);
         List<Long> phonemeList = new ArrayList<>();
 

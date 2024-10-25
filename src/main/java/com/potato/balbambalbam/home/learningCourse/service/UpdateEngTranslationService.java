@@ -13,7 +13,7 @@ public class UpdateEngTranslationService {
     private final CardRepository cardRepository;
     private final AiEngTranslationService aiEngTranslationService;
 
-    public void updateEngTranslation(Card card){
+    public void updateEngTranslation(Card card) {
         String text = card.getText();
         card.setCardTranslation(aiEngTranslationService.getEngTranslation(text).getEngTranslation());
         cardRepository.save(card);

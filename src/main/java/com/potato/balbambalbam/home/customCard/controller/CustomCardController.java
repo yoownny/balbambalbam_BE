@@ -5,8 +5,8 @@ import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.home.customCard.dto.CustomCardRequestDto;
 import com.potato.balbambalbam.home.customCard.dto.CustomCardResponseDto;
 import com.potato.balbambalbam.home.customCard.service.CustomCardService;
-import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
+import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +25,7 @@ public class CustomCardController {
     private final CustomCardService customCardService;
     private final JoinService joinService;
     private final JWTUtil jwtUtil;
+
     @PostMapping("/cards/custom")
     @Operation(summary = "customCard 생성", description = "text 해당하는 custom card를 생성한다")
     @ApiResponses(value = {
@@ -50,7 +51,7 @@ public class CustomCardController {
 
         boolean isDeleted = customCardService.deleteCustomCard(userId, cardId);
 
-        if(!isDeleted){
+        if (!isDeleted) {
             throw new CardDeleteException(cardId + " : 카드 삭제 실패하였습니다");
         }
 

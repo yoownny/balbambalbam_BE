@@ -22,6 +22,7 @@ public class AiEngTranslationService {
     WebClient webClient = WebClient.builder().build();
     @Value("${ai.service.url}")
     private String AI_URL;
+
     public EngTranslationResponseDto getEngTranslation(String text) {
         EngTranslationRequestDto engTranslationRequestDto = new EngTranslationRequestDto(text);
 
@@ -32,10 +33,10 @@ public class AiEngTranslationService {
                 .retrieve()//요청
                 //에러 처리 : 요청이 잘못갔을 경우
                 .onStatus(HttpStatus.BAD_REQUEST::equals,
-                        response-> response.bodyToMono(String.class).map(InvalidParameterException::new))
+                        response -> response.bodyToMono(String.class).map(InvalidParameterException::new))
                 //에러 처리 : 응답 생성 실패
                 .onStatus(HttpStatus.INTERNAL_SERVER_ERROR::equals,
-                        response-> response.bodyToMono(String.class).map(AiGenerationFailException::new))
+                        response -> response.bodyToMono(String.class).map(AiGenerationFailException::new))
                 .bodyToMono(EngTranslationResponseDto.class)
                 .timeout(Duration.ofSeconds(5)) //2초 안에 응답 오지 않으면 TimeoutException 발생
                 .block();

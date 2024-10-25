@@ -3,7 +3,8 @@ package com.potato.balbambalbam.home.learningCourse.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
-@Setter @Getter
+@Setter
+@Getter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
