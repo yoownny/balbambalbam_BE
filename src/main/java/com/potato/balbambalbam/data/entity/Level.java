@@ -13,11 +13,11 @@ public class Level {
 
     @Id
     @Column(name = "level_id")
-    private long levelId;
+    private Long levelId;
     @Column(name = "level")
     private String level;
     @Column(name = "level_experience")
-    private long levelExperience;
+    private Long levelExperience;
 
     public Level(){
     }

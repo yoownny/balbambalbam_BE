@@ -84,7 +84,7 @@ public class HomeInfoService {
 
     private void setDailyWordInfo(Long userId, HomeInfoDto homeInfoDto) {
         // TODO: 실제 일일 단어 서비스 구현 시 이 부분 수정 필요
-        homeInfoDto.setCategoryId(1L);
+        homeInfoDto.setDailycategoryId(1L);
         homeInfoDto.setDailyWord("든든해");
         homeInfoDto.setDailyWordMeaning("reliable");
     }

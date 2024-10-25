@@ -20,7 +20,7 @@ public class HomeInfoDto {
     @Schema(description = "주간 출석 상황", example = "TFFTTFF")
     private String weeklyAttendance;
     @Schema(description = "오늘의 추천 단어 카테고리", example = "1")
-    private Long categoryId;
+    private Long dailycategoryId;
     @Schema(description = "오늘의 추천 단어", example = "든든해")
     private String dailyWord;
     @Schema(description = "오늘의 추천 단어 의미", example = "reliable")
