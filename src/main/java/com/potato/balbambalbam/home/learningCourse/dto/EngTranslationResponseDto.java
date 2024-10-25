@@ -2,7 +2,8 @@ package com.potato.balbambalbam.home.learningCourse.dto;
 
 import lombok.*;
 
-@Getter @Setter
+@Getter
+@Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor

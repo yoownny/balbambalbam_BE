@@ -1,9 +1,9 @@
 package com.potato.balbambalbam.home.learningCourse.controller;
 
-import com.potato.balbambalbam.log.dto.ExceptionDto;
+import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.home.learningCourse.service.CardWeakSoundService;
-import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
+import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,7 +32,7 @@ public class CardWeakSoundController {
             @ApiResponse(responseCode = "200", description = "OK : Card WeakSound Update 성공)", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "ERROR : Update 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    public ResponseEntity updateCardWeakSound(@RequestHeader("access") String access){
+    public ResponseEntity updateCardWeakSound(@RequestHeader("access") String access) {
         Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
 
         String message = cardWeakSoundService.updateCardWeakSound(userId);

@@ -1,12 +1,12 @@
 package com.potato.balbambalbam.card.cardInsert;
 
+import com.potato.balbambalbam.card.tts.UpdateAllTtsService;
 import com.potato.balbambalbam.data.entity.Card;
 import com.potato.balbambalbam.data.repository.CardRepository;
 import com.potato.balbambalbam.data.repository.CardVoiceRepository;
 import com.potato.balbambalbam.home.learningCourse.service.UpdateEngPronunciationService;
 import com.potato.balbambalbam.home.learningCourse.service.UpdateEngTranslationService;
 import com.potato.balbambalbam.home.learningCourse.service.UpdatePhonemeService;
-import com.potato.balbambalbam.card.tts.UpdateAllTtsService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class CardInsertService {
         List<Card> cardList = cardRepository.findAll();
 
         cardList.forEach(card -> {
-            if(isNeedUpdate(card)){
+            if (isNeedUpdate(card)) {
                 updateCardRecord(card);
                 cardRepository.save(card);
                 log.info("{} update record success", card);
@@ -38,6 +38,7 @@ public class CardInsertService {
 
         return cardList.size();
     }
+
     @Transactional
     protected void updateCardRecord(Card card) {
         updatePhonemeService.updateCardPhonemeColumn(card);
@@ -46,11 +47,11 @@ public class CardInsertService {
         //updateAllTtsService.updateCardVoice(card);
     }
 
-    protected boolean isNeedUpdate(Card card){
-        if(card.getCategoryId() > 31 && (card.getCardTranslation() != null || card.getPhonemesMap() != null || card.getCardPronunciation() != null || cardVoiceRepository.findById(card.getCardId()).isPresent())) {
+    protected boolean isNeedUpdate(Card card) {
+        if (card.getCategoryId() > 31 && (card.getCardTranslation() != null || card.getPhonemesMap() != null || card.getCardPronunciation() != null || cardVoiceRepository.findById(card.getCardId()).isPresent())) {
             return false;
         }
-        if(card.getCardTranslation() == null || card.getPhonemesMap() == null || card.getCardPronunciation() == null || !cardVoiceRepository.findById(card.getCardId()).isPresent()){
+        if (card.getCardTranslation() == null || card.getPhonemesMap() == null || card.getCardPronunciation() == null || !cardVoiceRepository.findById(card.getCardId()).isPresent()) {
             return true;
         }
         return false;

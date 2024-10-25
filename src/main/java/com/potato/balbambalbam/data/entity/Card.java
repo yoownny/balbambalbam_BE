@@ -9,9 +9,11 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.List;
+
 @Entity(name = "card")
 @NoArgsConstructor
-@Getter @ToString @Setter
+@Getter
+@ToString
 public class Card {
     @Id
     @Column(name = "card_id")

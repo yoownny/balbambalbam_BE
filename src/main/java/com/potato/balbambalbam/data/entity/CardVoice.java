@@ -9,7 +9,8 @@ import lombok.ToString;
 @Getter
 @Entity(name = "card_voice")
 @ToString
-@NoArgsConstructor @Builder
+@NoArgsConstructor
+@Builder
 public class CardVoice {
     @Id
     @Column(name = "card_id")

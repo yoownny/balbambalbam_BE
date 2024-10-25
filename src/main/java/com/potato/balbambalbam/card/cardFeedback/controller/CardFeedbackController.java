@@ -1,12 +1,12 @@
 package com.potato.balbambalbam.card.cardFeedback.controller;
 
-import com.potato.balbambalbam.log.dto.ExceptionDto;
 import com.potato.balbambalbam.card.cardFeedback.dto.UserFeedbackRequestDto;
 import com.potato.balbambalbam.card.cardFeedback.dto.UserFeedbackResponseDto;
 import com.potato.balbambalbam.card.cardFeedback.service.CardFeedbackService;
 import com.potato.balbambalbam.card.cardFeedback.service.CustomCardFeedbackService;
-import com.potato.balbambalbam.user.token.jwt.JWTUtil;
+import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.user.join.service.JoinService;
+import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -35,7 +35,7 @@ public class CardFeedbackController {
             value = {
                     @ApiResponse(responseCode = "200", description = "OK : 카드 피드백 제공 성공", content = @Content(schema = @Schema(implementation = UserFeedbackResponseDto.class))),
                     @ApiResponse(responseCode = "400", description = "ERROR : JSON 형식 오류", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-                    @ApiResponse(responseCode = "404", description = "ERROR : 존재하지 않는 사용자 or 카드",  content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+                    @ApiResponse(responseCode = "404", description = "ERROR : 존재하지 않는 사용자 or 카드", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             }
     )
     public ResponseEntity<Object> postUserFeedback(@PathVariable("cardId") Long cardId,
@@ -54,12 +54,12 @@ public class CardFeedbackController {
             value = {
                     @ApiResponse(responseCode = "200", description = "OK : 카드 피드백 제공 성공", content = @Content(schema = @Schema(implementation = UserFeedbackResponseDto.class))),
                     @ApiResponse(responseCode = "400", description = "ERROR : JSON 형식 오류", content = @Content(schema = @Schema(implementation = ExceptionDto.class))),
-                    @ApiResponse(responseCode = "404", description = "ERROR : 존재하지 않는 사용자 or 카드",  content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
+                    @ApiResponse(responseCode = "404", description = "ERROR : 존재하지 않는 사용자 or 카드", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
             }
     )
     public ResponseEntity<Object> postCustomUserFeedback(@PathVariable("cardId") Long cardId,
-                                                   @Validated @RequestBody UserFeedbackRequestDto userFeedbackRequestDto,
-                                                         @RequestHeader("access") String access)  {
+                                                         @Validated @RequestBody UserFeedbackRequestDto userFeedbackRequestDto,
+                                                         @RequestHeader("access") String access) {
         Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
 
         UserFeedbackResponseDto userFeedbackResponseDto = customCardFeedbackService.postUserFeedback(userFeedbackRequestDto, cardId, userId);

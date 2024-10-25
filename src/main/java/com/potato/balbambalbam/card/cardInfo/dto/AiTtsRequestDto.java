@@ -2,7 +2,8 @@ package com.potato.balbambalbam.card.cardInfo.dto;
 
 import lombok.*;
 
-@Getter @Setter
+@Getter
+@Setter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor

@@ -8,9 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity(name = "card_weaksound")
-@Getter @NoArgsConstructor
+@Getter
+@NoArgsConstructor
 @IdClass(CardWeakSoundId.class)
-public class CardWeakSound  {
+public class CardWeakSound {
     @Id
     @Column(name = "user_id")
     private Long userId;

@@ -11,7 +11,7 @@ public class UserWeakSoundResponseDto {
     private int rank;
     private String phonemeText;
 
-    public UserWeakSoundResponseDto(int rank, String phonemeText){
+    public UserWeakSoundResponseDto(int rank, String phonemeText) {
         this.rank = rank;
         this.phonemeText = phonemeText;
     }

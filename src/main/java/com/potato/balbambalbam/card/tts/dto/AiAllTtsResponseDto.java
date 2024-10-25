@@ -1,6 +1,5 @@
 package com.potato.balbambalbam.card.tts.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

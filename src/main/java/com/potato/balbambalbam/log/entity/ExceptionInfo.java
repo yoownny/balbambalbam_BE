@@ -2,6 +2,7 @@ package com.potato.balbambalbam.log.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 @Entity
 @Getter
 @Setter

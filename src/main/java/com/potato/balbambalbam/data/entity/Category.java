@@ -9,7 +9,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity(name = "category")
-@Getter @Setter
+@Getter
+@Setter
 @ToString
 @NoArgsConstructor
 public class Category {
@@ -17,6 +18,6 @@ public class Category {
     @Column(name = "category_id")
     private Long category_id;
     @Column(name = "level", nullable = false)
-    private int level;
+    private String level;
 
 }

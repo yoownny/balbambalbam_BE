@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Slf4j
 public class BalbambalbamApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BalbambalbamApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BalbambalbamApplication.class, args);
+    }
 }

@@ -17,7 +17,7 @@ public class EditResponseDto {
     @NotNull(message = "입력 데이터가 충분하지 않습니다.")
     private Byte gender;
 
-    public EditResponseDto(String name, Integer age, Byte gender){
+    public EditResponseDto(String name, Integer age, Byte gender) {
         this.name = name;
         this.age = age;
         this.gender = gender;

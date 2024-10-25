@@ -1,11 +1,11 @@
 package com.potato.balbambalbam.home.customCard.controller;
 
-import com.potato.balbambalbam.log.dto.ExceptionDto;
+import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.home.learningCourse.dto.CardListResponseDto;
 import com.potato.balbambalbam.home.learningCourse.dto.ResponseCardDto;
 import com.potato.balbambalbam.home.learningCourse.service.CardListService;
-import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
+import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -29,13 +30,13 @@ public class CustomCardListController {
     private final JWTUtil jwtUtil;
     private final CardListService cardListService;
 
-    @GetMapping("/cards/custom")
+    @GetMapping("/home/custom")
     @Operation(summary = "Custom CardList 조회", description = "parameter에 맞는 카테고리의 카드 리스트를 조회한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK : 카드리스트 조회", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "ERROR : 존재하지 않는 카테고리 조회", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    public ResponseEntity<CardListResponseDto<List<ResponseCardDto>>> getCustomCardList(@RequestHeader("access") String access){
+    public ResponseEntity<CardListResponseDto<List<ResponseCardDto>>> getCustomCardList(@RequestHeader("access") String access) {
         Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
 
         List<ResponseCardDto> cardDtoList = cardListService.getCustomCards(userId);
