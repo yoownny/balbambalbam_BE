@@ -21,7 +21,7 @@ public class LoginController {
     })
 
     @PostMapping("/login")
-    public String login( @RequestParam String socialId) {
+    public String login(@RequestParam String socialId) {
         return "로그인이 완료되었습니다.";
     }
 }

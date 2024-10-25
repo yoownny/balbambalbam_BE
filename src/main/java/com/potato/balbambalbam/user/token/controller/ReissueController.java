@@ -2,9 +2,9 @@ package com.potato.balbambalbam.user.token.controller;
 
 import com.potato.balbambalbam.data.entity.Refresh;
 import com.potato.balbambalbam.data.repository.RefreshRepository;
-import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.exception.ResponseNotFoundException;
 import com.potato.balbambalbam.exception.TokenExpiredException;
+import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +32,7 @@ public class ReissueController {
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
 
-    public ReissueController(JWTUtil jwtUtil, RefreshRepository refreshRepository){
+    public ReissueController(JWTUtil jwtUtil, RefreshRepository refreshRepository) {
         this.jwtUtil = jwtUtil;
         this.refreshRepository = refreshRepository;
     }
@@ -75,7 +75,7 @@ public class ReissueController {
         response.setHeader("access", newAccess);
         response.setHeader("refresh", newRefresh);
 
-        return new ResponseEntity<>("refresh 토근과 access 토큰이 재발급 되었습니다.",HttpStatus.OK);//200
+        return new ResponseEntity<>("refresh 토근과 access 토큰이 재발급 되었습니다.", HttpStatus.OK);//200
     }
 
     private void addRefreshEntity(String socialId, String refresh, Long expiredMs) {

@@ -59,6 +59,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
     private void sendError(HttpServletResponse response, int statusCode, String exceptionName, String message) throws IOException {
         ExceptionDto exceptionDto = new ExceptionDto(statusCode, exceptionName, message);
         response.setStatus(statusCode);

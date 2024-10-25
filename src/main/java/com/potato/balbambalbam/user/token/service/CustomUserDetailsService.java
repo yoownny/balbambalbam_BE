@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<User> user = userRepository.findBySocialId(socialId);
 
         if (user == null) {
-            Logger.getLogger(CustomUserDetailsService.class.getName()).log(Level.SEVERE,socialId);
+            Logger.getLogger(CustomUserDetailsService.class.getName()).log(Level.SEVERE, socialId);
             throw new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + socialId);
         }
 
