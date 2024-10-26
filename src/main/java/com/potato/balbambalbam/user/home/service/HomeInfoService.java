@@ -16,7 +16,6 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -106,7 +105,7 @@ public class HomeInfoService {
                 .orElseThrow(() -> new RuntimeException(
                         String.format("Card not found for date %s (ID: %d)", today, todayCardId)));
 
-        //homeInfoDto.setDailycategoryId(todayCard.getCategoryId());
+        homeInfoDto.setDailyWordId(todayCard.getCardId());
         homeInfoDto.setDailyWord(todayCard.getText());
         homeInfoDto.setDailyWordMeaning(todayCard.getCardSummary());
     }
