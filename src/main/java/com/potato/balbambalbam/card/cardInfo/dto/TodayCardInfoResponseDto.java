@@ -15,15 +15,15 @@ public class TodayCardInfoResponseDto {
 
     private Long id;
 
-    @Schema(name = "card 내용", example = "남사친")
+    @Schema(description = "card 내용", example = "남사친")
     private String text;
 
-    @Schema(name = "card 로마자 발음", example = "namsachin")
+    @Schema(description = "card 로마자 발음", example = "namsachin")
     private String cardPronunciation;
 
-    @Schema(name = "card 설명", example = "Shortened term for a male friend who is 'just a friend'")
+    @Schema(description = "card 설명", example = "Shortened term for a male friend who is 'just a friend'")
     private String cardSummary;
 
-    @Schema(name = "card TTS (in base64)", example = "너무 길어서 생략")
+    @Schema(description = "card TTS (in base64)", example = "너무 길어서 생략")
     private String correctAudio;
 }
