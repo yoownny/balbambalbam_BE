@@ -44,7 +44,7 @@ public class CardInsertService {
         updatePhonemeService.updateCardPhonemeColumn(card);
         updateEngPronunciationService.updateEngPronunciation(card);
         updateEngTranslationService.updateEngTranslation(card);
-        //updateAllTtsService.updateCardVoice(card);
+        updateAllTtsService.updateCardVoice(card);
     }
 
     protected boolean isNeedUpdate(Card card) {
