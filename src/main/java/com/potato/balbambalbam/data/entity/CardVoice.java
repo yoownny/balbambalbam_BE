@@ -14,7 +14,6 @@ import lombok.ToString;
 public class CardVoice {
     @Id
     @Column(name = "card_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Lob
     @Column(name = "child_male", columnDefinition = "MEDIUMBLOB", length = 16777215)
