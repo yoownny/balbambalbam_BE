@@ -21,4 +21,37 @@ public class TodayCard {
 
     @Column(name = "card_summary")
     private String cardSummary;
+
+    @Lob
+    @Column(name = "child_male", columnDefinition = "MEDIUMBLOB", length = 16777215)
+    private String childMale;
+
+    @Lob
+    @Column(name = "child_female", columnDefinition = "MEDIUMBLOB", length = 16777215)
+    private String childFemale;
+
+    @Lob
+    @Column(name = "adult_male", columnDefinition = "MEDIUMBLOB", length = 16777215)
+    private String adultMale;
+
+    @Lob
+    @Column(name = "adult_female", columnDefinition = "MEDIUMBLOB", length = 16777215)
+    private String adultFemale;
+
+    @Lob
+    @Column(name = "elderly_male", columnDefinition = "MEDIUMBLOB", length = 16777215)
+    private String elderlyMale;
+
+    @Lob
+    @Column(name = "elderly_female", columnDefinition = "MEDIUMBLOB", length = 16777215)
+    private String elderlyFemale;
+
+    public void saveCardVoice (String childMale, String childFemale, String adultMale, String adultFemale, String elderlyMale, String elderlyFemale) {
+        this.childMale = childMale;
+        this.childFemale = childFemale;
+        this.adultMale = adultMale;
+        this.adultFemale = adultFemale;
+        this.elderlyMale = elderlyMale;
+        this.elderlyFemale = elderlyFemale;
+    }
 }
