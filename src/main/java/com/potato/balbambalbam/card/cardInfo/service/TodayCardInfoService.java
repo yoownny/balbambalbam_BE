@@ -3,12 +3,14 @@ package com.potato.balbambalbam.card.cardInfo.service;
 import com.potato.balbambalbam.card.cardInfo.dto.AiTtsRequestDto;
 import com.potato.balbambalbam.card.cardInfo.dto.AiTtsResponseDto;
 import com.potato.balbambalbam.card.cardInfo.dto.TodayCardInfoResponseDto;
+import com.potato.balbambalbam.data.entity.CardVoice;
 import com.potato.balbambalbam.data.entity.TodayCard;
 import com.potato.balbambalbam.data.entity.User;
 import com.potato.balbambalbam.data.repository.TodayCardRepository;
 import com.potato.balbambalbam.data.repository.UserRepository;
 import com.potato.balbambalbam.exception.CardNotFoundException;
 import com.potato.balbambalbam.exception.UserNotFoundException;
+import com.potato.balbambalbam.exception.VoiceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,20 +23,12 @@ public class TodayCardInfoService {
 
     private final TodayCardRepository todayCardRepository;
     private final UserRepository userRepository;
-    private final AiTtsService aiTtsService;
-
-    public TodayCard getTodayCardEntity() {
-        final int cycleLength = 93;
-        LocalDate startDate = LocalDate.of(2024, 10, 25);
-        long daysBetween = ChronoUnit.DAYS.between(startDate, LocalDate.now());
-
-        long todayCardId = (daysBetween % cycleLength) + 1;
-        return todayCardRepository.findById(todayCardId).get();
-    }
 
     public TodayCardInfoResponseDto getTodayCardInfo(Long userId, Long cardId) {
         TodayCard todayCard = todayCardRepository.findById(cardId).get();
-        String voice = createCardVoice(getAiTtsRequestDto(userId, todayCard.getText()));
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다"));
+        String voice = getCardVoice(todayCard, user.getGender(), user.getAge());
         return getCardInfoResponseDto(userId, cardId, voice);
     }
 
@@ -51,16 +45,33 @@ public class TodayCardInfoService {
         return todayCardInfoResponseDto;
     }
 
-    protected AiTtsRequestDto getAiTtsRequestDto(Long userId, String text) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다"));
-        Integer age = user.getAge();
-        Byte gender = user.getGender();
+    protected String getCardVoice(TodayCard todayCard, byte gender, int age) {
+        String voice = null;
+        switch (gender) {
+            // 남자
+            case (0): {
+                if (age <= 14) {// 아이
+                    voice = todayCard.getChildMale();
+                } else if (age <= 40) { // 청년
+                    voice = todayCard.getAdultMale();
+                } else { //중장년
+                    voice = todayCard.getElderlyMale();
+                }
+                break;
+            }
+            // 여자
+            case (1): {
+                if (age <= 14) { // 아이
+                    voice = todayCard.getChildFemale();
+                } else if (age <= 40) { // 청년
+                    voice = todayCard.getAdultFemale();
+                } else { // 중장년
+                    voice = todayCard.getElderlyFemale();
+                }
+                break;
+            }
+        }
 
-        return new AiTtsRequestDto(age, gender, text);
-    }
-
-    protected String createCardVoice(AiTtsRequestDto aiTtsRequestDto) {
-        AiTtsResponseDto aiTtsResponseDto = aiTtsService.getTtsVoice(aiTtsRequestDto);
-        return aiTtsResponseDto.getCorrectAudio();
+        return voice;
     }
 }
