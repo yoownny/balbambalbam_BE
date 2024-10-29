@@ -4,10 +4,8 @@ import com.potato.balbambalbam.data.entity.Refresh;
 import com.potato.balbambalbam.data.entity.User;
 import com.potato.balbambalbam.data.entity.UserLevel;
 import com.potato.balbambalbam.data.repository.*;
-import com.potato.balbambalbam.exception.InvalidUserNameException;
-import com.potato.balbambalbam.exception.SocialIdChangeException;
 import com.potato.balbambalbam.exception.UserNotFoundException;
-import com.potato.balbambalbam.user.join.dto.EditResponseDto;
+import com.potato.balbambalbam.user.profile.dto.EditResponseDto;
 import com.potato.balbambalbam.user.join.dto.JoinResponseDto;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,12 +22,6 @@ public class JoinService {
     private final UserRepository userRepository;
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
-    private final CardBookmarkRepository cardBookmarkRepository;
-    private final CardScoreRepository cardScoreRepository;
-    private final CardWeakSoundRepository cardWeakSoundRepository;
-    private final CustomCardRepository customCardRepository;
-    private final UserWeakSoundRepository userWeakSoundRepository;
-    private final WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy;
     private final UserLevelRepository userLevelRepository;
 
     //새로운 회원정보 저장
@@ -78,61 +70,6 @@ public class JoinService {
         refreshEntity.setExpiration(date.toString());
 
         refreshRepository.save(refreshEntity);
-    }
-
-    // 회원정보 업데이트
-    @Transactional
-    public EditResponseDto updateUser(Long userId, JoinResponseDto joinDto) {
-        User editUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); //404
-
-        if (joinDto.getSocialId() != null) {
-            throw new SocialIdChangeException("이메일 변경은 허용되지 않습니다."); //400
-        }
-
-        editUser.setName(joinDto.getName());
-        editUser.setAge(joinDto.getAge());
-        editUser.setGender(joinDto.getGender());
-
-        userRepository.save(editUser);
-
-        return new EditResponseDto(editUser.getName(), editUser.getAge(), editUser.getGender());
-    }
-
-    //회원정보 삭제
-    @Transactional
-    public void deleteUser(Long userId, String name) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-
-        if (!user.getName().equals(name)) {
-            throw new InvalidUserNameException("닉네임이 일치하지 않습니다."); //400
-        }
-
-        if (cardBookmarkRepository.existsByUserId(userId)) {
-            cardBookmarkRepository.deleteByUserId(userId);
-        }
-        if (cardScoreRepository.existsByUserId(userId)) {
-            cardScoreRepository.deleteByUserId(userId);
-        }
-        if (cardWeakSoundRepository.existsByUserId(userId)) {
-            cardWeakSoundRepository.deleteByUserId(userId);
-        }
-        if (customCardRepository.existsByUserId(userId)) {
-            customCardRepository.deleteUserById(userId);
-        }
-        if (userWeakSoundRepository.existsByUserId(userId)) {
-            userWeakSoundRepository.deleteByUserId(userId);
-        }
-        if (weakSoundTestSatusRepositoy.existsByUserId(userId)) {
-            weakSoundTestSatusRepositoy.deleteByUserId(userId);
-        }
-        if (userLevelRepository.existsByUserId(userId)) {  // existsById 대신 existsByUserId 사용
-            userLevelRepository.deleteByUserId(userId);    // deleteById 대신 deleteByUserId 사용
-        }
-
-        refreshRepository.deleteBySocialId(user.getSocialId());
-        userRepository.deleteById(userId);
     }
 
     //회원정보 검색

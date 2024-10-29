@@ -3,6 +3,7 @@ package com.potato.balbambalbam.data.repository;
 import com.potato.balbambalbam.data.entity.UserAttendance;
 import java.time.LocalDate;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -23,4 +24,10 @@ public interface UserAttendanceRepository extends JpaRepository<UserAttendance, 
     List<UserAttendance> findWeeklyAttendance(@Param("userId") Long userId,
                                               @Param("startDate") LocalDate startDate,
                                               @Param("endDate") LocalDate endDate);
+
+    boolean existsByUserId(Long userId);
+
+    @Modifying
+    @Query("DELETE FROM user_attendance ua WHERE ua.userId = :userId")
+    void deleteByUserId(Long userId);
 }

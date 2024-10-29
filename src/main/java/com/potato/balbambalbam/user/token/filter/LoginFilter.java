@@ -82,7 +82,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         refreshRepository.deleteBySocialId(socialId);
         addRefreshEntity(socialId, refresh, 864000000L);
 
-        log.info("로그인이 완료되었습니다.");
         response.setContentType("text/plain; charset=UTF-8");
         response.getWriter().print("로그인이 완료되었습니다.");
     }
@@ -101,8 +100,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-
-        log.info("로그인에 실패하였습니다.");
 
         if (failed instanceof UsernameNotFoundException) {
             sendError(response, HttpServletResponse.SC_NOT_FOUND, "UsernameNotFoundException", "존재하지 않은 사용자 아이디입니다."); // 404
