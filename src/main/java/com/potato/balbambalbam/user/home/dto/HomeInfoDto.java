@@ -12,7 +12,7 @@ import java.util.List;
 public class HomeInfoDto {
 
     @Schema(description = "사용자 레벨", example = "3")
-    private String userLevel;
+    private Long userLevel;
     @Schema(description = "레벨 총 경험치", example = "30")
     private Long levelExperience;
     @Schema(description = "사용자 경험치", example = "17")
@@ -23,6 +23,12 @@ public class HomeInfoDto {
     private Long dailyWordId;
     @Schema(description = "오늘의 추천 단어", example = "든든해")
     private String dailyWord;
-    @Schema(description = "오늘의 추천 단어 의미", example = "reliable")
-    private String dailyWordMeaning;
+    @Schema(description = "오늘의 추천 단어 발음법", example = "deun-deun-hae")
+    private String dailyWordPronunciation;
+    @Schema(description = "Saved Cards 수", example = "1")
+    private Long savedCardNumber;
+    @Schema(description = "Missed Cards 수", example = "2")
+    private Long missedCardNumber;
+    @Schema(description = "Custom Cards 수", example = "3")
+    private Long customCardNumber;
 }

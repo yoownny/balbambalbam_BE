@@ -4,6 +4,9 @@ import com.potato.balbambalbam.data.entity.Level;
 import com.potato.balbambalbam.data.entity.TodayCard;
 import com.potato.balbambalbam.data.entity.UserAttendance;
 import com.potato.balbambalbam.data.entity.UserLevel;
+import com.potato.balbambalbam.data.repository.CardBookmarkRepository;
+import com.potato.balbambalbam.data.repository.CardScoreRepository;
+import com.potato.balbambalbam.data.repository.CustomCardRepository;
 import com.potato.balbambalbam.data.repository.LevelRepository;
 import com.potato.balbambalbam.data.repository.TodayCardRepository;
 import com.potato.balbambalbam.data.repository.UserAttendanceRepository;
@@ -28,6 +31,9 @@ public class HomeInfoService {
     private final LevelRepository levelRepository;
     private final UserAttendanceRepository userAttendanceRepository;
     private final TodayCardRepository todayCardRepository;
+    private final CardBookmarkRepository cardBookmarkRepository;
+    private final CardScoreRepository cardScoreRepository;
+    private final CustomCardRepository customCardRepository;
 
     @Transactional
     public HomeInfoDto getHomeInfo(Long userId) {
@@ -37,9 +43,11 @@ public class HomeInfoService {
         setUserLevelInfo(userId, homeInfoDto);
         setUserAttendanceInfo(userId, homeInfoDto);
         setDailyWordInfo(homeInfoDto);
+        setUserNumInfo(userId, homeInfoDto);
 
         return homeInfoDto;
     }
+
 
     private void checkTodayAttendance(Long userId) {
         LocalDate today = LocalDate.now();
@@ -90,15 +98,10 @@ public class HomeInfoService {
         // 기준일 설정 (2024-10-26)
         LocalDate baseDate = LocalDate.of(2024, 10, 26);
         LocalDate today = LocalDate.now();
-
-        // 기준일로부터 경과된 일수 계산
         long daysSinceBase = ChronoUnit.DAYS.between(baseDate, today);
-
-        // 전체 카드 개수 (93개)
         final int TOTAL_CARDS = 93;
 
         // 카드 ID 계산: (경과일 % 전체카드수) + 1
-        // 기준일(2024-10-26)의 카드 ID가 1이 되도록 설정
         long todayCardId = (daysSinceBase % TOTAL_CARDS) + 1;
 
         TodayCard todayCard = todayCardRepository.findById(todayCardId)
@@ -107,7 +110,17 @@ public class HomeInfoService {
 
         homeInfoDto.setDailyWordId(todayCard.getCardId());
         homeInfoDto.setDailyWord(todayCard.getText());
-        homeInfoDto.setDailyWordMeaning(todayCard.getCardSummary());
+        homeInfoDto.setDailyWordPronunciation(todayCard.getCardPronunciation());
+    }
+
+    private void setUserNumInfo(Long userId, HomeInfoDto homeInfoDto) {
+        Long savedCards = cardBookmarkRepository.countByUserId(userId);
+        Long missedCards = cardScoreRepository.countByUserId(userId);
+        Long customCards = customCardRepository.countByUserId(userId);
+
+        homeInfoDto.setSavedCardNumber(savedCards);
+        homeInfoDto.setMissedCardNumber(missedCards);
+        homeInfoDto.setCustomCardNumber(customCards);
     }
 
 }

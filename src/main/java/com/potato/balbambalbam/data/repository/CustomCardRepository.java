@@ -2,6 +2,8 @@ package com.potato.balbambalbam.data.repository;
 
 import com.potato.balbambalbam.data.entity.CustomCard;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,4 +24,7 @@ public interface CustomCardRepository extends JpaRepository<CustomCard, Long> {
     void deleteUserById(Long userId);
 
     boolean existsByUserId(Long userId);
+
+    @Query("SELECT COUNT(cc) FROM custom_card cc WHERE cc.userId = :userId")
+    Long countByUserId(@Param("userId") Long userId);
 }

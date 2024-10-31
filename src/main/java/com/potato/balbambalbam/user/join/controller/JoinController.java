@@ -1,7 +1,7 @@
 package com.potato.balbambalbam.user.join.controller;
 
 import com.potato.balbambalbam.exception.dto.ExceptionDto;
-import com.potato.balbambalbam.user.profile.dto.EditResponseDto;
+import com.potato.balbambalbam.user.setting.dto.EditResponseDto;
 import com.potato.balbambalbam.user.join.dto.JoinResponseDto;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
