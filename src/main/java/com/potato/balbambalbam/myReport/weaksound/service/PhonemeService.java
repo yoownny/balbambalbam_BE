@@ -1,8 +1,8 @@
-package com.potato.balbambalbam.myPage.weaksound.service;
+package com.potato.balbambalbam.myReport.weaksound.service;
 
 import com.potato.balbambalbam.data.entity.Phoneme;
 import com.potato.balbambalbam.data.repository.PhonemeRepository;
-import com.potato.balbambalbam.myPage.test.dto.TestResponseDto;
+import com.potato.balbambalbam.myReport.test.dto.TestResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

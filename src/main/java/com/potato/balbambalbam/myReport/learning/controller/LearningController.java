@@ -1,9 +1,9 @@
-package com.potato.balbambalbam.myPage.learning.controller;
+package com.potato.balbambalbam.myReport.learning.controller;
 
 import com.potato.balbambalbam.data.entity.Card;
 import com.potato.balbambalbam.data.entity.CardScore;
-import com.potato.balbambalbam.myPage.learning.dto.LearningResponseDto;
-import com.potato.balbambalbam.myPage.learning.service.LearningService;
+import com.potato.balbambalbam.myReport.learning.dto.LearningResponseDto;
+import com.potato.balbambalbam.myReport.learning.service.LearningService;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
 import io.swagger.v3.oas.annotations.Operation;

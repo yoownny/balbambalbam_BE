@@ -1,4 +1,4 @@
-package com.potato.balbambalbam.myPage.weaksound.controller;
+package com.potato.balbambalbam.myReport.weaksound.controller;
 
 import com.potato.balbambalbam.data.entity.Phoneme;
 import com.potato.balbambalbam.data.entity.UserWeakSound;
@@ -8,7 +8,7 @@ import com.potato.balbambalbam.data.repository.UserWeakSoundRepository;
 import com.potato.balbambalbam.data.repository.WeakSoundTestSatusRepositoy;
 import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.exception.ResponseNotFoundException;
-import com.potato.balbambalbam.myPage.weaksound.dto.UserWeakSoundResponseDto;
+import com.potato.balbambalbam.myReport.weaksound.dto.UserWeakSoundResponseDto;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
 import io.swagger.v3.oas.annotations.Operation;

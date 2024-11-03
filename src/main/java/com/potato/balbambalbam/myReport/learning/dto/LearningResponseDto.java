@@ -1,4 +1,4 @@
-package com.potato.balbambalbam.myPage.learning.dto;
+package com.potato.balbambalbam.myReport.learning.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

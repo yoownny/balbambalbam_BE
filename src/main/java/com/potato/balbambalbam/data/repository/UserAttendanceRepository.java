@@ -30,4 +30,7 @@ public interface UserAttendanceRepository extends JpaRepository<UserAttendance, 
     @Modifying
     @Query("DELETE FROM user_attendance ua WHERE ua.userId = :userId")
     void deleteByUserId(Long userId);
+
+    @Query("SELECT ua FROM user_attendance ua WHERE ua.userId = :userId AND ua.isPresent = true")
+    List<UserAttendance> findAllByUserId(@Param("userId") Long userId);
 }
