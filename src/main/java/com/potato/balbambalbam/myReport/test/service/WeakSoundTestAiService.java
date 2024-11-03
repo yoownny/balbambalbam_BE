@@ -1,9 +1,9 @@
-package com.potato.balbambalbam.myPage.test.service;
+package com.potato.balbambalbam.myReport.test.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.potato.balbambalbam.myPage.test.dto.TestResponseDto;
-import com.potato.balbambalbam.myPage.weaksound.service.PhonemeService;
+import com.potato.balbambalbam.myReport.test.dto.TestResponseDto;
+import com.potato.balbambalbam.myReport.weaksound.service.PhonemeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;

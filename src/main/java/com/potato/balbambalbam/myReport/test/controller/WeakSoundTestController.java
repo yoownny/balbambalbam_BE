@@ -1,12 +1,12 @@
-package com.potato.balbambalbam.myPage.test.controller;
+package com.potato.balbambalbam.myReport.test.controller;
 
 import com.potato.balbambalbam.data.entity.WeakSoundTest;
 import com.potato.balbambalbam.data.repository.WeakSoundTestRepository;
 import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.exception.InvalidParameterException;
 import com.potato.balbambalbam.exception.ParameterNotFoundException;
-import com.potato.balbambalbam.myPage.test.dto.WeakSoundTestListDto;
-import com.potato.balbambalbam.myPage.test.service.WeakSoundTestService;
+import com.potato.balbambalbam.myReport.test.dto.WeakSoundTestListDto;
+import com.potato.balbambalbam.myReport.test.service.WeakSoundTestService;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
 import io.swagger.v3.oas.annotations.Operation;

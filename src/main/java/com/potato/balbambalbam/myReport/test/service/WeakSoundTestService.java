@@ -1,4 +1,4 @@
-package com.potato.balbambalbam.myPage.test.service;
+package com.potato.balbambalbam.myReport.test.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.potato.balbambalbam.data.entity.UserWeakSound;
@@ -8,9 +8,9 @@ import com.potato.balbambalbam.data.repository.UserWeakSoundRepository;
 import com.potato.balbambalbam.data.repository.WeakSoundTestRepository;
 import com.potato.balbambalbam.data.repository.WeakSoundTestSatusRepositoy;
 import com.potato.balbambalbam.exception.ResponseNotFoundException;
-import com.potato.balbambalbam.myPage.test.dto.WeakSoundTestListDto;
-import com.potato.balbambalbam.myPage.test.dto.TestResponseDto;
-import com.potato.balbambalbam.myPage.weaksound.service.PhonemeService;
+import com.potato.balbambalbam.myReport.test.dto.WeakSoundTestListDto;
+import com.potato.balbambalbam.myReport.test.dto.TestResponseDto;
+import com.potato.balbambalbam.myReport.weaksound.service.PhonemeService;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;

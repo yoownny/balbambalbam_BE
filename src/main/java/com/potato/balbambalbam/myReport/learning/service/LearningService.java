@@ -1,4 +1,4 @@
-package com.potato.balbambalbam.myPage.learning.service;
+package com.potato.balbambalbam.myReport.learning.service;
 
 import com.potato.balbambalbam.data.entity.Card;
 import com.potato.balbambalbam.data.entity.CardScore;
