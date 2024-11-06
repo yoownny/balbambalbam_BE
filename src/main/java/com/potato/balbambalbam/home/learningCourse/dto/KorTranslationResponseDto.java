@@ -7,6 +7,6 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class TranslationRequestDto {
-    private String text;
+public class KorTranslationResponseDto {
+    private String korTranslation;
 }

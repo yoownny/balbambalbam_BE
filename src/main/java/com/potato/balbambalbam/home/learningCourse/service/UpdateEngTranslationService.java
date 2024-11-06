@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UpdateEngTranslationService {
     private final CardRepository cardRepository;
-    private final AiEngTranslationService aiEngTranslationService;
+    private final AiTranslationService aiTranslationService;
 
     public void updateEngTranslation(Card card) {
         String text = card.getText();
-        card.setCardTranslation(aiEngTranslationService.getEngTranslation(text).getEngTranslation());
+        card.setCardTranslation(aiTranslationService.getEngTranslation(text).getEngTranslation());
         cardRepository.save(card);
     }
 }

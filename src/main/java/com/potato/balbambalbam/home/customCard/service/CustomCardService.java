@@ -7,7 +7,7 @@ import com.potato.balbambalbam.data.repository.UserRepository;
 import com.potato.balbambalbam.exception.CardNotFoundException;
 import com.potato.balbambalbam.exception.UserNotFoundException;
 import com.potato.balbambalbam.home.customCard.dto.CustomCardResponseDto;
-import com.potato.balbambalbam.home.learningCourse.service.AiEngTranslationService;
+import com.potato.balbambalbam.home.learningCourse.service.AiTranslationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +22,30 @@ public class CustomCardService {
     private final CustomCardRepository customCardRepository;
     private final UserRepository userRepository;
     private final AiPronunciationService aiPronunciationService;
-    private final AiEngTranslationService aiEngTranslationService;
+    private final AiTranslationService aiTranslationService;
 
     public CustomCardResponseDto createCustomCardIfPossible(String text, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("존재하지 않는 회원입니다"));
 
-        CustomCard customCard = createCustomCard(text, userId);
+        CustomCard customCard;
+        if(isKorean(text)) {
+            customCard = createKoreanInput(text, userId);
+        } else {
+            customCard = createEnglishInput(text, userId);
+        }
 
         return createCustomCardResponse(customCard);
+    }
+
+    public static boolean isKorean(String text) {
+        for (char ch : text.toCharArray()) {
+            // 영어 문자가 아닌 경우만 검증
+            if ((Character.UnicodeBlock.of(ch) == Character.UnicodeBlock.BASIC_LATIN) ||
+                    (Character.UnicodeBlock.of(ch) == Character.UnicodeBlock.LATIN_1_SUPPLEMENT)) {
+                return false; // 영어가 포함된 경우
+            }
+        }
+        return true; // 모두 영어가 아니면 한글로 판단
     }
 
     protected CustomCardResponseDto createCustomCardResponse(CustomCard customCard) {
@@ -40,6 +56,30 @@ public class CustomCardService {
         customCardResponse.setEngTranslation(customCard.getEngTranslation());
 
         return customCardResponse;
+    }
+
+    protected CustomCard createKoreanInput(String text, Long userId) {
+        String engPronunciation = aiPronunciationService.getEngPronunciation(text).getEngPronunciation();
+        String engTranslation = aiTranslationService.getEngTranslation(text).getEngTranslation();
+        return createCustomCard(text, engPronunciation, engTranslation, userId);
+    }
+
+    protected CustomCard createEnglishInput(String englishText, Long userId) {
+        String text = aiTranslationService.getKorTranslation(englishText).getKorTranslation();
+        String engPronunciation = aiPronunciationService.getEngPronunciation(text).getEngPronunciation();
+        return createCustomCard(text, engPronunciation, englishText, userId);
+    }
+
+    @Transactional
+    protected CustomCard createCustomCard(String text, String engPronunciation, String engTranslation, Long userId) {
+        CustomCard customCard = new CustomCard();
+        customCard.setText(text);
+        customCard.setEngPronunciation(engPronunciation);
+        customCard.setUserId(userId);
+        customCard.setIsBookmarked(false);
+        customCard.setEngTranslation(engTranslation);
+
+        return customCardRepository.save(customCard);
     }
 
     public boolean deleteCustomCard(Long userId, Long cardId) {
@@ -53,17 +93,5 @@ public class CustomCardService {
         }
 
         return true;
-    }
-
-    protected CustomCard createCustomCard(String text, Long userId) {
-        CustomCard customCard = new CustomCard();
-        customCard.setText(text);
-        String engPronunciation = aiPronunciationService.getEngPronunciation(text).getEngPronunciation();
-        customCard.setEngPronunciation(engPronunciation);
-        customCard.setUserId(userId);
-        customCard.setIsBookmarked(false);
-        customCard.setEngTranslation(aiEngTranslationService.getEngTranslation(customCard.getText()).getEngTranslation());
-
-        return customCardRepository.save(customCard);
     }
 }
