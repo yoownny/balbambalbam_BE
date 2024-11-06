@@ -25,27 +25,6 @@ public class AiPronunciationService {
     @Value("${ai.service.url}")
     private String AI_URL;
 
-    public AiKorPronunciationResponseDto getKorPronunciation(String text) {
-        AiKorPronunciationRequestDto aiKorPronunciationRequestDto = new AiKorPronunciationRequestDto(text);
-
-        AiKorPronunciationResponseDto responseDto = webClient.post()
-                .uri(AI_URL + "/ai/kor-pronunciation")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.just(aiKorPronunciationRequestDto), AiKorPronunciationRequestDto.class)
-                .retrieve()//요청
-                //에러 처리 : 요청이 잘못갔을 경우
-                .onStatus(HttpStatus.BAD_REQUEST::equals,
-                        response -> response.bodyToMono(String.class).map(InvalidParameterException::new))
-                //에러 처리 : 발음생성실패
-                .onStatus(HttpStatus.INTERNAL_SERVER_ERROR::equals,
-                        response -> response.bodyToMono(String.class).map(AiGenerationFailException::new))
-                .bodyToMono(AiKorPronunciationResponseDto.class)
-                .timeout(Duration.ofSeconds(5)) //2초 안에 응답 오지 않으면 TimeoutException 발생
-                .block();
-
-        return responseDto;
-    }
-
     public AiEngPronunciationResponseDto getEngPronunciation(String text) {
         AiEngPronunciationRequestDto aiEngPronunciationRequest = new AiEngPronunciationRequestDto(text);
 

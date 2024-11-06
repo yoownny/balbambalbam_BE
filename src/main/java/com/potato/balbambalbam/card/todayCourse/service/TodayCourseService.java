@@ -9,6 +9,7 @@ import com.potato.balbambalbam.data.repository.CardRepository;
 import com.potato.balbambalbam.data.repository.CardScoreRepository;
 import com.potato.balbambalbam.data.repository.UserLevelRepository;
 import com.potato.balbambalbam.exception.UserNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,10 @@ public class TodayCourseService {
         UserLevel userLevel = userLevelRepository.findByUserId(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다"));
 
-        //2. 카드를 가져온다
+        //2. 학습할 카테고리를 완료했는지 검사한다
+        updateUserCategoryId(userLevel, userId);
+
+        //3. 카드를 가져온다
         long categoryId = userLevel.getCategoryId();
         List<Long> cardList;
         if (categoryId >= 1 && categoryId <= 4) { //음절
@@ -48,6 +52,35 @@ public class TodayCourseService {
         }
 
         return new TodayCourseResponseDto(cardList);
+    }
+
+    @Transactional
+    protected void updateUserCategoryId(UserLevel userLevel, Long userId) {
+        //만렙
+        if(userLevel.getCategoryId() == 26) {
+            return;
+        }
+
+        Long currentCategoryId = userLevel.getCategoryId();
+        List<Long> studyedCardIdList = cardScoreRepository.findByUserId(userId).stream().map(CardScore::getCardId).toList();
+        List<Long> cardIdList = cardRepository.findAllByCategoryId(currentCategoryId).stream().map(Card::getCardId).toList();
+        long intersectionCount = cardIdList.stream()
+                .filter(studyedCardIdList::contains)
+                .count();
+        //단어
+        if(userLevel.getCategoryId() > 4 && userLevel.getCategoryId() < 16) {
+            if(intersectionCount >= 30) {
+                userLevel.setCategoryId(currentCategoryId + 1);
+                userLevelRepository.save(userLevel);
+            }
+            return;
+        }
+
+        //음절, 문장
+        if(intersectionCount == cardIdList.size()) {
+            userLevel.setCategoryId(currentCategoryId + 1);
+            userLevelRepository.save(userLevel);
+        }
     }
 
     protected List<Long> getSyllableOrSentenceList(Long userId, Long categoryId, int courseSize) {
