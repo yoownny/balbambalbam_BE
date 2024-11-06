@@ -24,7 +24,7 @@ public class AiCardFeedbackService {
     public AiFeedbackResponseDto postAiFeedback(AiFeedbackRequestDto aiFeedbackRequestDto) {
 
         AiFeedbackResponseDto aiFeedbackResponseDto = webClient.post()
-                .uri(AI_URL + "/ai/feedback")
+                .uri(AI_URL + "/ai/feedback-test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(aiFeedbackRequestDto), AiFeedbackRequestDto.class)
                 .retrieve()//요청
@@ -34,11 +34,11 @@ public class AiCardFeedbackService {
                 //에러 처리 : 사용자 텍스트 추출 실패
                 .onStatus(HttpStatus.UNPROCESSABLE_ENTITY::equals,
                         response -> response.bodyToMono(String.class).map(AiGenerationFailException::new))
-                //에러 처리 : 텍스트 분리 실패, 정확도 계산 실패, waveform 실패
+                //에러 처리 : 텍스트 분리 실패, 정확도 계산, 그래프 추출 실패
                 .onStatus(HttpStatus.INTERNAL_SERVER_ERROR::equals,
                         response -> response.bodyToMono(String.class).map(AiGenerationFailException::new))
                 .bodyToMono(AiFeedbackResponseDto.class)
-                .timeout(Duration.ofSeconds(10)) //10초 안에 응답 오지 않으면 TimeoutException 발생
+                .timeout(Duration.ofSeconds(60)) //10초 안에 응답 오지 않으면 TimeoutException 발생
                 .block();
 
         return aiFeedbackResponseDto;

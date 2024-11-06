@@ -1,5 +1,7 @@
 package com.potato.balbambalbam.card.cardFeedback.dto;
 
+import com.potato.balbambalbam.card.cardInfo.dto.CardInfoResponseDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,67 +14,51 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
+@Schema(name = "카드 피드백 Response")
 public class UserFeedbackResponseDto {
+    @Schema(example = "1")
     private Long cardId;
-    private UserAudio userAudio;
+
+    @Schema(example = "[0, 1]")
+    private List<Integer> mistakenIndexes;
+
+    @Schema(example = "100")
     private Integer userScore;
-    private Map<Long, RecommendCardInfo> recommendCard;
-    private Waveform waveform;
+
+    private Map<Long, CardInfoResponseDto> recommendCard;
+
+    private CorrectAudio correctAudio;
+
+    private UserAudio userAudio;
 
     @Getter
     @Setter
+    @Schema(name = "사용자 amplitude")
     public static class UserAudio {
+
+        @Schema(example = "base64 목소리")
         private String text;
 
-        private List<Integer> mistakenIndexes;
+        private List<AiFeedbackResponseDto.AmplitudeData> amplitude;
 
-        public UserAudio(String text, List<Integer> mistakenIndexes) {
+        public UserAudio(String text, List<AiFeedbackResponseDto.AmplitudeData> amplitude) {
             this.text = text;
-            this.mistakenIndexes = mistakenIndexes;
+            this.amplitude = amplitude;
         }
     }
 
     @Getter
     @Setter
-    public static class Waveform {
-        private String userWaveform;
-        private Double userAudioDuration;
-        private String correctWaveform;
-        private Double correctAudioDuration;
+    @Schema(name = "tts amplitude")
+    public static class CorrectAudio {
 
-        public Waveform(String userWaveform, Double userAudioDuration, String correctWaveform, Double correctAudioDuration) {
-            this.userWaveform = userWaveform;
-            this.userAudioDuration = userAudioDuration;
-            this.correctWaveform = correctWaveform;
-            this.correctAudioDuration = correctAudioDuration;
-        }
-    }
-
-    @Getter
-    @Setter
-    @ToString
-    public static class RecommendCardInfo {
-
+        @Schema(example = "base64 목소리")
         private String text;
-        private String category;
-        private String subcategory;
+        private List<AiFeedbackResponseDto.AmplitudeData> amplitude;
 
-        public RecommendCardInfo(String text, String category, String subcategory) {
+        public CorrectAudio(String text, List<AiFeedbackResponseDto.AmplitudeData> amplitude) {
             this.text = text;
-            this.category = category;
-            this.subcategory = subcategory;
-        }
-
-        public RecommendCardInfo(String text) {
-            this.text = text;
-            this.category = null;
-            this.subcategory = null;
-        }
-
-        public RecommendCardInfo() {
-            this.text = null;
-            this.category = null;
-            this.subcategory = null;
+            this.amplitude = amplitude;
         }
     }
 }

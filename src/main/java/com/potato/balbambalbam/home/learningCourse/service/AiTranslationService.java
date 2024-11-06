@@ -3,7 +3,7 @@ package com.potato.balbambalbam.home.learningCourse.service;
 import com.potato.balbambalbam.exception.AiGenerationFailException;
 import com.potato.balbambalbam.exception.InvalidParameterException;
 import com.potato.balbambalbam.home.learningCourse.dto.EngTranslationRequestDto;
-import com.potato.balbambalbam.home.learningCourse.dto.EngTranslationResponseDto;
+import com.potato.balbambalbam.home.learningCourse.dto.TranslationResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,10 +23,10 @@ public class AiEngTranslationService {
     @Value("${ai.service.url}")
     private String AI_URL;
 
-    public EngTranslationResponseDto getEngTranslation(String text) {
+    public TranslationResponseDto getEngTranslation(String text) {
         EngTranslationRequestDto engTranslationRequestDto = new EngTranslationRequestDto(text);
 
-        EngTranslationResponseDto responseDto = webClient.post()
+        TranslationResponseDto responseDto = webClient.post()
                 .uri(AI_URL + "/ai/eng-translation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(engTranslationRequestDto), EngTranslationRequestDto.class)
@@ -37,7 +37,28 @@ public class AiEngTranslationService {
                 //에러 처리 : 응답 생성 실패
                 .onStatus(HttpStatus.INTERNAL_SERVER_ERROR::equals,
                         response -> response.bodyToMono(String.class).map(AiGenerationFailException::new))
-                .bodyToMono(EngTranslationResponseDto.class)
+                .bodyToMono(TranslationResponseDto.class)
+                .timeout(Duration.ofSeconds(5)) //2초 안에 응답 오지 않으면 TimeoutException 발생
+                .block();
+
+        return responseDto;
+    }
+
+    public TranslationResponseDto getKorTranslation(String text) {
+        EngTranslationRequestDto engTranslationRequestDto = new EngTranslationRequestDto(text);
+
+        TranslationResponseDto responseDto = webClient.post()
+                .uri(AI_URL + "/ai/kor-translation")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(engTranslationRequestDto), EngTranslationRequestDto.class)
+                .retrieve()//요청
+                //에러 처리 : 요청이 잘못갔을 경우
+                .onStatus(HttpStatus.BAD_REQUEST::equals,
+                        response -> response.bodyToMono(String.class).map(InvalidParameterException::new))
+                //에러 처리 : 응답 생성 실패
+                .onStatus(HttpStatus.INTERNAL_SERVER_ERROR::equals,
+                        response -> response.bodyToMono(String.class).map(AiGenerationFailException::new))
+                .bodyToMono(TranslationResponseDto.class)
                 .timeout(Duration.ofSeconds(5)) //2초 안에 응답 오지 않으면 TimeoutException 발생
                 .block();
 
