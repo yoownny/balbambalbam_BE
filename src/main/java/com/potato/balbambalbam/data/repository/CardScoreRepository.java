@@ -19,6 +19,8 @@ public interface CardScoreRepository extends JpaRepository<CardScore, Long> {
 
     boolean existsByUserId(Long userId);
 
+    boolean existsByCardIdAndUserId(Long cardId, Long userId);
+
     @Query("SELECT COUNT(cs) FROM card_score cs WHERE cs.userId = :userId AND cs.highestScore < 100")
     Long countByUserId(@Param("userId") Long userId);
 }
