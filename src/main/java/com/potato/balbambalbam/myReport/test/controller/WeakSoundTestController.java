@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,8 +26,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+@RequiredArgsConstructor
 @RestController
-@Slf4j
 @Tag(name = "WeakSoundTest API", description = "사용자의 취약음소 테스트와 관련된 API를 제공한다.")
 public class WeakSoundTestController {
 
@@ -34,16 +35,6 @@ public class WeakSoundTestController {
     private final JoinService joinService;
     private final JWTUtil jwtUtil;
     private final WeakSoundTestService weakSoundTestService;
-
-    public WeakSoundTestController(WeakSoundTestRepository weakSoundTestRepository,
-                                   JoinService joinService,
-                                   JWTUtil jwtUtil,
-                                   WeakSoundTestService weakSoundTestService){
-        this.weakSoundTestRepository = weakSoundTestRepository;
-        this.joinService = joinService;
-        this.jwtUtil = jwtUtil;
-        this.weakSoundTestService = weakSoundTestService;
-    }
 
     private Long extractUserIdFromToken(String access) {
         String socialId = jwtUtil.getSocialId(access);
