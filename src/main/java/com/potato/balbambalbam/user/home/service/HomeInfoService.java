@@ -77,18 +77,22 @@ public class HomeInfoService {
 
     private void setUserAttendanceInfo(Long userId, HomeInfoDto homeInfoDto) {
         LocalDate now = LocalDate.now();
-        LocalDate monday = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate sunday = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        LocalDate sunday = now.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate saturday = now.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
 
-        List<UserAttendance> attendances = userAttendanceRepository.findWeeklyAttendance(userId, monday, sunday);
+        List<UserAttendance> attendances = userAttendanceRepository.findWeeklyAttendance(userId, sunday, saturday);
 
-        char[] weekAttendance = new char[7]; // 월~일까지 7일
+        char[] weekAttendance = new char[7]; // 일~토까지 7일
         Arrays.fill(weekAttendance, 'F');
 
         for (UserAttendance attendance : attendances) {
             if (attendance.getIsPresent()) {
-                int dayOfWeek = attendance.getAttendanceDate().getDayOfWeek().getValue() - 1;
-                weekAttendance[dayOfWeek] = 'T';
+                int dayOfWeek = attendance.getAttendanceDate().getDayOfWeek().getValue();
+                if (dayOfWeek == 7) { // 일요일
+                    weekAttendance[0] = 'T';
+                } else { // 월~토
+                    weekAttendance[dayOfWeek] = 'T';
+                }
             }
         }
         homeInfoDto.setWeeklyAttendance(new String(weekAttendance));
