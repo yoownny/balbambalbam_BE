@@ -1,25 +1,30 @@
 package com.potato.balbambalbam.myReport.weaksound.service;
 
 import com.potato.balbambalbam.data.entity.Phoneme;
+import com.potato.balbambalbam.data.entity.UserWeakSound;
+import com.potato.balbambalbam.data.entity.WeakSoundTestStatus;
 import com.potato.balbambalbam.data.repository.PhonemeRepository;
+import com.potato.balbambalbam.data.repository.UserWeakSoundRepository;
+import com.potato.balbambalbam.data.repository.WeakSoundTestSatusRepositoy;
+import com.potato.balbambalbam.exception.ResponseNotFoundException;
 import com.potato.balbambalbam.myReport.test.dto.TestResponseDto;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Service
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class PhonemeService {
-
     private final PhonemeRepository phonemeRepository;
+    private final UserWeakSoundRepository userWeakSoundRepository;
+    private final WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy;
     private Map<Long, Map<Long, Integer>> temporaryStorage = new HashMap<>();
 
-    public PhonemeService(PhonemeRepository phonemeRepository) {
-        this.phonemeRepository = phonemeRepository;
-    }
 
     @Transactional
     public void storePhonemeData(Long userId, TestResponseDto dto) { //임시 저장소
@@ -34,7 +39,8 @@ public class PhonemeService {
         temporaryStorage.put(userId, phonemeCounts);
     }
 
-    private void phonemeMap(Map<String, Integer> testResponseMap, List<Long> types, Map<Long, Integer> newPhonemeCounts) {
+    private void phonemeMap(Map<String, Integer> testResponseMap, List<Long> types,
+                            Map<Long, Integer> newPhonemeCounts) {
         for (Map.Entry<String, Integer> entry : testResponseMap.entrySet()) {
             List<Phoneme> phonemes = phonemeRepository.findByTypeAndText(types, entry.getKey());
             phonemes.forEach(phoneme -> newPhonemeCounts.merge(phoneme.getId(), entry.getValue(), Integer::sum));
@@ -52,4 +58,27 @@ public class PhonemeService {
     public void clearTemporaryData(Long userId) {
         temporaryStorage.remove(userId);
     }
+
+    @Transactional
+    public void deleteWeakPhoneme(Long userId, Long phonemeId) {
+        UserWeakSound userWeakSound = userWeakSoundRepository
+                .findByUserIdAndUserPhoneme(userId, phonemeId)
+                .orElseThrow(() -> new ResponseNotFoundException("해당하는 취약음소가 없습니다."));
+        userWeakSoundRepository.delete(userWeakSound);
+    }
+
+    @Transactional
+    public void deleteAllWeakPhonemesAndStatus(Long userId) {
+        // 모든 취약음소 삭제
+        List<UserWeakSound> userWeakSounds = userWeakSoundRepository.findAllByUserId(userId);
+        if (!userWeakSounds.isEmpty()) {
+            userWeakSoundRepository.deleteAll(userWeakSounds);
+        }
+        // 테스트 상태 삭제
+        WeakSoundTestStatus testStatus = weakSoundTestSatusRepositoy.findByUserId(userId);
+        if (testStatus != null) {
+            weakSoundTestSatusRepositoy.delete(testStatus);
+        }
+    }
+
 }
