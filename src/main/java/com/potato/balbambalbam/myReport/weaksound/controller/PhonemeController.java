@@ -1,10 +1,6 @@
 package com.potato.balbambalbam.myReport.weaksound.controller;
 
-import com.potato.balbambalbam.data.entity.Phoneme;
-import com.potato.balbambalbam.data.entity.UserWeakSound;
 import com.potato.balbambalbam.data.entity.WeakSoundTestStatus;
-import com.potato.balbambalbam.data.repository.PhonemeRepository;
-import com.potato.balbambalbam.data.repository.UserWeakSoundRepository;
 import com.potato.balbambalbam.data.repository.WeakSoundTestSatusRepositoy;
 import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.exception.ResponseNotFoundException;
@@ -20,26 +16,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @RestController
 @Tag(name = "WeakSound API", description = "사용자의 취약음소와 관련된 API를 제공한다.")
 public class PhonemeController {
-
-    private final UserWeakSoundRepository userWeakSoundRepository;
-    private final PhonemeRepository phonemeRepository;
     private final JoinService joinService;
     private final JWTUtil jwtUtil;
     private final WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy;
@@ -75,29 +64,11 @@ public class PhonemeController {
     public ResponseEntity<List<UserWeakSoundResponseDto>> getWeakPhonemesByUserId(
             @RequestHeader("access") String access) {
         Long userId = extractUserIdFromToken(access);
-        List<UserWeakSound> weakPhonemes = userWeakSoundRepository.findAllByUserId(userId);
+        List<UserWeakSoundResponseDto> weakPhonemes = phonemeService.getWeakPhonemes(userId);
         if (weakPhonemes.isEmpty()) {
             throw new ResponseNotFoundException("취약음소가 없습니다.");
         }
-        List<UserWeakSoundResponseDto> weakPhonemeDtos = weakPhonemes.stream()
-                .map(weakPhoneme -> {
-                    Phoneme phoneme = phonemeRepository.findById(weakPhoneme.getUserPhoneme())
-                            .orElseThrow(() -> new RuntimeException("음소 정보를 찾을 수 없습니다."));
-                    String phonemeText = getPhonemeType(phoneme.getType()) + " " + phoneme.getText();
-                    return new UserWeakSoundResponseDto(
-                            weakPhonemes.indexOf(weakPhoneme) + 1, phoneme.getId(), phonemeText);
-                })
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(weakPhonemeDtos);
-    }
-
-    private String getPhonemeType(Long type) {
-        return switch (type.intValue()) {
-            case 0 -> "Initial consonant";
-            case 1 -> "Medial vowel";
-            case 2 -> "Final consonant";
-            default -> "?";
-        };
+        return ResponseEntity.ok(weakPhonemes);
     }
 
     @Operation(summary = "사용자의 취약음소 삭제", description = "사용자의 취약음소를 삭제한다.")

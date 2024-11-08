@@ -8,6 +8,7 @@ import com.potato.balbambalbam.data.repository.UserWeakSoundRepository;
 import com.potato.balbambalbam.data.repository.WeakSoundTestSatusRepositoy;
 import com.potato.balbambalbam.exception.ResponseNotFoundException;
 import com.potato.balbambalbam.myReport.test.dto.TestResponseDto;
+import com.potato.balbambalbam.myReport.weaksound.dto.UserWeakSoundResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,4 +82,32 @@ public class PhonemeService {
         }
     }
 
+    @Transactional
+    public List<UserWeakSoundResponseDto> getWeakPhonemes(Long userId) {
+        List<UserWeakSound> weakPhonemes = userWeakSoundRepository.findAllByUserId(userId);
+        if (weakPhonemes.isEmpty()) {
+            return List.of();
+        }
+
+        return weakPhonemes.stream()
+                .map(weakPhoneme -> {
+                    Phoneme phoneme = phonemeRepository.findById(weakPhoneme.getUserPhoneme())
+                            .orElseThrow(() -> new RuntimeException("음소 정보를 찾을 수 없습니다."));
+                    String phonemeText = getPhonemeType(phoneme.getType()) + " " + phoneme.getText();
+                    return new UserWeakSoundResponseDto(
+                            weakPhonemes.indexOf(weakPhoneme) + 1,
+                            phoneme.getId(),
+                            phonemeText
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+    private String getPhonemeType(Long type) {
+        return switch (type.intValue()) {
+            case 0 -> "Initial consonant";
+            case 1 -> "Medial vowel";
+            case 2 -> "Final consonant";
+            default -> "?";
+        };
+    }
 }
