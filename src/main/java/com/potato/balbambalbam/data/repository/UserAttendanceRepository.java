@@ -33,4 +33,7 @@ public interface UserAttendanceRepository extends JpaRepository<UserAttendance, 
 
     @Query("SELECT ua FROM user_attendance ua WHERE ua.userId = :userId AND ua.isPresent = true")
     List<UserAttendance> findAllByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT COUNT(ua) FROM user_attendance ua WHERE ua.userId = :userId AND ua.isPresent = :isPresent")
+    Long countByUserIdAndIsPresent(@Param("userId") Long userId, @Param("isPresent") Boolean isPresent);
 }

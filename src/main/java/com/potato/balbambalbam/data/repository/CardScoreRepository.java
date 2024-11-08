@@ -1,6 +1,7 @@
 package com.potato.balbambalbam.data.repository;
 
 import com.potato.balbambalbam.data.entity.CardScore;
+import java.time.LocalDateTime;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +24,14 @@ public interface CardScoreRepository extends JpaRepository<CardScore, Long> {
 
     @Query("SELECT COUNT(cs) FROM card_score cs WHERE cs.userId = :userId AND cs.highestScore < 100")
     Long countByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT AVG(cs.highestScore) FROM card_score cs WHERE cs.userId = :userId")
+    Double getAverageScoreByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT cs FROM card_score cs WHERE cs.userId = :userId " +
+            "AND cs.timeStamp BETWEEN :startTime AND :endTime")
+    List<CardScore> findByUserIdAndTimeStampBetween(
+            @Param("userId") Long userId,
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime);
 }

@@ -3,7 +3,6 @@ package com.potato.balbambalbam.myReport.report.controller;
 import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.myReport.report.dto.ReportInfoDto;
 import com.potato.balbambalbam.myReport.report.service.ReportInfoService;
-import com.potato.balbambalbam.user.home.dto.HomeInfoDto;
 import com.potato.balbambalbam.user.join.service.JoinService;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
