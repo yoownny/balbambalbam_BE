@@ -146,12 +146,13 @@ public class CardFeedbackService {
                 Long phonemeId = phonemeRepository.findPhonemeByTextOrderById(pronunciation).get(0).getId();
                 Long cardId = cardList.stream().filter(c -> c.getPhonemesMap().contains(phonemeId)).findAny().get().getCardId();
                 String cardDescription;
+                String text = phonemeRepository.findById(phonemeId).get().getText();
                 if(cardId <= 27L) {
                     cardDescription = "Vowel";
                 } else {
                     cardDescription = "Consonant";
                 }
-                recommendCard.put(cardDescription + cardId, cardInfoService.getCardInfo(userId, cardId));
+                recommendCard.put(cardDescription + text, cardInfoService.getCardInfo(userId, cardId));
             }
         }
 
