@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,8 +39,10 @@ public class NotificationController {
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
     })
     @GetMapping("/notification")
-    public void getNotification(@RequestHeader("access") String access) {
+    public ResponseEntity<List<NotificationDto>> getNotification(@RequestHeader("access") String access) {
         Long userId = extractUserIdFromToken(access);
+        List<NotificationDto> notifications = notificationService.getActiveNotifications(userId);
+        return ResponseEntity.ok(notifications);
     }
 
     @Operation(summary = "알림 읽음 처리", description = "특정 알림을 읽음 처리합니다.")
@@ -48,9 +51,10 @@ public class NotificationController {
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("/notification/{notificationId}")
-    public void readNotification(@PathVariable Long notificationId, @RequestHeader("access") String access) {
+    public ResponseEntity<Void> readNotification(@PathVariable Long notificationId, @RequestHeader("access") String access) {
         Long userId = extractUserIdFromToken(access);
-
+        notificationService.markAsRead(notificationId, userId);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "읽지 않은 알림 유무 확인", description = "사용자의 읽지 않은 알림 존재 여부를 확인합니다.")
@@ -59,8 +63,9 @@ public class NotificationController {
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
     })
     @GetMapping("/notification/unread")
-    public void hasUnreadNotifications(@PathVariable Long notificationId,@RequestHeader("access") String access) {
+    public ResponseEntity<Boolean> hasUnreadNotifications(@RequestHeader("access") String access) {
         Long userId = extractUserIdFromToken(access);
-
+        boolean hasUnread = notificationService.hasUnreadNotifications(userId);
+        return ResponseEntity.ok(hasUnread);
     }
 }
