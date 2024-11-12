@@ -25,7 +25,7 @@ public class UserFeedbackResponseDto {
     @Schema(example = "100")
     private Integer userScore;
 
-    private Map<Long, CardInfoResponseDto> recommendCard;
+    private Map<String, CardInfoResponseDto> recommendCard;
 
     private CorrectAudio correctAudio;
 

@@ -48,7 +48,7 @@ public class CardFeedbackService {
         }
 
         //학습카드 추천
-        Map<Long, CardInfoResponseDto> recommendCard = createRecommendCard(userId, aiFeedbackResponseDto, categoryId);
+        Map<String, CardInfoResponseDto> recommendCard = createRecommendCard(userId, aiFeedbackResponseDto, categoryId);
 
         return setUserFeedbackResponseDto(cardId, aiFeedbackResponseDto, recommendCard);
     }
@@ -109,19 +109,19 @@ public class CardFeedbackService {
      * @param categoryId
      * @return
      */
-    protected Map<Long, CardInfoResponseDto> createRecommendCard(Long userId, AiFeedbackResponseDto aiFeedbackResponseDto, Long categoryId) {
-        Map<Long, CardInfoResponseDto> recommendCard = new HashMap<>();
+    protected Map<String, CardInfoResponseDto> createRecommendCard(Long userId, AiFeedbackResponseDto aiFeedbackResponseDto, Long categoryId) {
+        Map<String, CardInfoResponseDto> recommendCard = new HashMap<>();
 
 
         //1. 100점인 경우
         if (aiFeedbackResponseDto.getUserAccuracy() == 100) {
-            recommendCard.put(-100L, new CardInfoResponseDto());
+            recommendCard.put("Perfect", new CardInfoResponseDto());
             return recommendCard;
         }
 
         //2. 100점 아니고 한글자인 경우
         if(categoryId == 1L || categoryId == 3L) {
-            recommendCard.put(-1L, new CardInfoResponseDto());
+            recommendCard.put("Try Again", new CardInfoResponseDto());
             return recommendCard;
         }
 
@@ -130,12 +130,12 @@ public class CardFeedbackService {
 
     }
 
-    protected Map<Long, CardInfoResponseDto> getWordRecommendCards(Long userId, List<String> recommendedPronunciations, List<String> recommendedLastPronunciations) {
-        Map<Long, CardInfoResponseDto> recommendCard = new HashMap<>();
+    protected Map<String, CardInfoResponseDto> getWordRecommendCards(Long userId, List<String> recommendedPronunciations, List<String> recommendedLastPronunciations) {
+        Map<String, CardInfoResponseDto> recommendCard = new HashMap<>();
 
         //4. 틀린게 4개 이상인 경우
         if(recommendedPronunciations.size() + recommendedLastPronunciations.size() > 4) {
-            recommendCard.put(-1L, new CardInfoResponseDto());
+            recommendCard.put("Try Again", new CardInfoResponseDto());
             return recommendCard;
         }
 
@@ -145,7 +145,13 @@ public class CardFeedbackService {
             for(String pronunciation : recommendedPronunciations) {
                 Long phonemeId = phonemeRepository.findPhonemeByTextOrderById(pronunciation).get(0).getId();
                 Long cardId = cardList.stream().filter(c -> c.getPhonemesMap().contains(phonemeId)).findAny().get().getCardId();
-                recommendCard.put(cardId, cardInfoService.getCardInfo(userId, cardId));
+                String cardDescription;
+                if(cardId <= 27L) {
+                    cardDescription = "Vowel";
+                } else {
+                    cardDescription = "Consonant";
+                }
+                recommendCard.put(cardDescription + cardId, cardInfoService.getCardInfo(userId, cardId));
             }
         }
 
@@ -153,7 +159,8 @@ public class CardFeedbackService {
             for(String pronunciation : recommendedLastPronunciations) {
                 Long phonemeId = phonemeRepository.findPhonemeByTextAndTypeOrderById(pronunciation, 2L).get(0).getId();
                 Long cardId = finalCardList.stream().filter(c -> c.getPhonemesMap().contains(phonemeId)).findAny().get().getCardId();
-                recommendCard.put(cardId, cardInfoService.getCardInfo(userId, cardId));
+                String text = phonemeRepository.findById(phonemeId).get().getText();
+                recommendCard.put("Final Consonant" + text, cardInfoService.getCardInfo(userId, cardId));
             }
         }
 
@@ -166,7 +173,7 @@ public class CardFeedbackService {
      * @param recommendCard
      * @return
      */
-    protected UserFeedbackResponseDto setUserFeedbackResponseDto(Long cardId, AiFeedbackResponseDto aiFeedback, Map<Long, CardInfoResponseDto> recommendCard) {
+    protected UserFeedbackResponseDto setUserFeedbackResponseDto(Long cardId, AiFeedbackResponseDto aiFeedback, Map<String, CardInfoResponseDto> recommendCard) {
         //사용자 오디오, TTS 오디오
         UserFeedbackResponseDto.UserAudio userAudio = new UserFeedbackResponseDto.UserAudio(aiFeedback.getUserAudio(), aiFeedback.getUserAmplitude());
         UserFeedbackResponseDto.CorrectAudio correctAudio = new UserFeedbackResponseDto.CorrectAudio(aiFeedback.getCorrectAudio(), aiFeedback.getCorrectAmplitude());

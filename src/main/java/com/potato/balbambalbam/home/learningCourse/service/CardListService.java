@@ -3,6 +3,7 @@ package com.potato.balbambalbam.home.learningCourse.service;
 import com.potato.balbambalbam.data.entity.*;
 import com.potato.balbambalbam.data.repository.*;
 import com.potato.balbambalbam.exception.CardNotFoundException;
+import com.potato.balbambalbam.home.learningCourse.dto.CourseResponseDto;
 import com.potato.balbambalbam.home.learningCourse.dto.ResponseCardDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -134,5 +135,19 @@ public class CardListService {
             customCardRepository.save(customCard);
             return cardId + "번 카드 북마크 추가";
         }
+    }
+
+    public CourseResponseDto getCourseList(Long userId) {
+        List<CourseResponseDto.Course> courses = new ArrayList<>();
+
+        List<Long> completedIds = cardScoreRepository.findByUserId(userId).stream().map(CardScore::getCardId).toList();
+        for(long i = 1; i <= 25; i++) {
+            List<Long> cardIds = cardRepository.findAllByCategoryId(i).stream().map(Card::getCardId).toList();
+            int count = (int)completedIds.stream().filter(cardIds::contains).count();
+
+            courses.add(new CourseResponseDto.Course(i, cardIds.size(), count));
+        }
+
+        return new CourseResponseDto(courses);
     }
 }

@@ -25,11 +25,11 @@ public class TodayCardFeedbackService {
 
         //학습카드 추천
         int score = aiFeedbackResponseDto.getUserAccuracy();
-        Map<Long, CardInfoResponseDto> recommendCard = new HashMap<>();
+        Map<String, CardInfoResponseDto> recommendCard = new HashMap<>();
         if (score == 100) {
-            recommendCard.put(-100L, new CardInfoResponseDto());
+            recommendCard.put("Perfect", new CardInfoResponseDto());
         } else {
-            recommendCard.put(-1L, new CardInfoResponseDto());
+            recommendCard.put("Try Again", new CardInfoResponseDto());
         }
 
         return setUserFeedbackResponseDto(aiFeedbackResponseDto, recommendCard, cardId);
@@ -54,7 +54,7 @@ public class TodayCardFeedbackService {
     }
 
 
-    protected UserFeedbackResponseDto setUserFeedbackResponseDto(AiFeedbackResponseDto aiFeedback, Map<Long, CardInfoResponseDto> recommendCard, Long cardId) {
+    protected UserFeedbackResponseDto setUserFeedbackResponseDto(AiFeedbackResponseDto aiFeedback, Map<String, CardInfoResponseDto> recommendCard, Long cardId) {
         //사용자 오디오, TTS 오디오
         UserFeedbackResponseDto.UserAudio userAudio = new UserFeedbackResponseDto.UserAudio(aiFeedback.getUserText(), aiFeedback.getUserAmplitude());
         UserFeedbackResponseDto.CorrectAudio correctAudio = new UserFeedbackResponseDto.CorrectAudio(aiFeedback.getCorrectAudio(), aiFeedback.getCorrectAmplitude());
