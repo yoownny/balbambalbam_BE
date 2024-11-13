@@ -36,7 +36,7 @@ public class NotificationService {
                     dto.setTitle(notification.getTitle());
                     dto.setContent(notification.getContent());
                     dto.setUnread(!readNotificationIds.contains(notification.getId()));
-                    dto.setCreated_At(notification.getCreatedAt());
+                    dto.setCreatedAt(notification.getCreatedAt());
                     return dto;
                 })
                 .collect(Collectors.toList());
