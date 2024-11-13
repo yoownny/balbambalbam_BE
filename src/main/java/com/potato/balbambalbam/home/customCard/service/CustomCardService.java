@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 @Slf4j
 @Transactional
@@ -28,7 +31,7 @@ public class CustomCardService {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("존재하지 않는 회원입니다"));
 
         CustomCard customCard;
-        if(isKorean(text)) {
+        if(!isEnglish(text)) {
             customCard = createKoreanInput(text, userId);
         } else {
             customCard = createEnglishInput(text, userId);
@@ -37,15 +40,8 @@ public class CustomCardService {
         return createCustomCardResponse(customCard);
     }
 
-    public static boolean isKorean(String text) {
-        for (char ch : text.toCharArray()) {
-            // 영어 문자가 아닌 경우만 검증
-            if ((Character.UnicodeBlock.of(ch) == Character.UnicodeBlock.BASIC_LATIN) ||
-                    (Character.UnicodeBlock.of(ch) == Character.UnicodeBlock.LATIN_1_SUPPLEMENT)) {
-                return false; // 영어가 포함된 경우
-            }
-        }
-        return true; // 모두 영어가 아니면 한글로 판단
+    public static boolean isEnglish(String text) {
+        return text.matches(".*[a-zA-Z]+.*");
     }
 
     protected CustomCardResponseDto createCustomCardResponse(CustomCard customCard) {
