@@ -31,4 +31,6 @@ public class HomeInfoDto {
     private Long missedCardNumber;
     @Schema(description = "Custom Cards 수", example = "3")
     private Long customCardNumber;
+    @Schema(description = "읽지 않은 알림 존재 여부", example = "true")
+    private boolean hasUnreadNotifications;
 }
