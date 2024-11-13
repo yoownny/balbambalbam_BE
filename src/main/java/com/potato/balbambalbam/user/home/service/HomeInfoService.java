@@ -12,6 +12,7 @@ import com.potato.balbambalbam.data.repository.TodayCardRepository;
 import com.potato.balbambalbam.data.repository.UserAttendanceRepository;
 import com.potato.balbambalbam.data.repository.UserLevelRepository;
 import com.potato.balbambalbam.user.home.dto.HomeInfoDto;
+import com.potato.balbambalbam.user.notification.service.NotificationService;
 import jakarta.transaction.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -34,6 +35,7 @@ public class HomeInfoService {
     private final CardBookmarkRepository cardBookmarkRepository;
     private final CardScoreRepository cardScoreRepository;
     private final CustomCardRepository customCardRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public HomeInfoDto getHomeInfo(Long userId) {
@@ -44,10 +46,10 @@ public class HomeInfoService {
         setUserAttendanceInfo(userId, homeInfoDto);
         setDailyWordInfo(homeInfoDto);
         setUserNumInfo(userId, homeInfoDto);
+        homeInfoDto.setHasUnreadNotifications(notificationService.hasUnreadNotifications(userId));
 
         return homeInfoDto;
     }
-
 
     private void checkTodayAttendance(Long userId) {
         LocalDate today = LocalDate.now();

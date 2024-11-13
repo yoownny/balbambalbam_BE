@@ -56,16 +56,4 @@ public class NotificationController {
         notificationService.markAsRead(notificationId, userId);
         return ResponseEntity.ok().build();
     }
-
-    @Operation(summary = "읽지 않은 알림 유무 확인", description = "사용자의 읽지 않은 알림 존재 여부를 확인합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "읽지 않은 알림 존재 여부 확인 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotificationDto.class))),
-            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
-    })
-    @GetMapping("/notification/unread")
-    public ResponseEntity<Boolean> hasUnreadNotifications(@RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
-        boolean hasUnread = notificationService.hasUnreadNotifications(userId);
-        return ResponseEntity.ok(hasUnread);
-    }
 }
