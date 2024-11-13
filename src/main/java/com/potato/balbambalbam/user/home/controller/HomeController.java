@@ -4,6 +4,7 @@ import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.user.home.dto.HomeInfoDto;
 import com.potato.balbambalbam.user.home.service.HomeInfoService;
 import com.potato.balbambalbam.user.join.service.JoinService;
+import com.potato.balbambalbam.user.notification.service.NotificationService;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,6 +26,7 @@ public class HomeController {
     private final JoinService joinService;
     private final JWTUtil jwtUtil;
     private final HomeInfoService homeInfoService;
+    private final NotificationService notificationService;
 
     private Long extractUserIdFromToken(String access) { // access 토큰으로부터 userId 추출하는 함수
         String socialId = jwtUtil.getSocialId(access);
