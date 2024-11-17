@@ -26,6 +26,10 @@ public class PhonemeService {
     private final WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy;
     private Map<Long, Map<Long, Integer>> temporaryStorage = new HashMap<>();
 
+    public boolean hasTemporaryData(Long userId) {
+        Map<Long, Integer> userData = temporaryStorage.get(userId);
+        return userData != null && !userData.isEmpty();
+    }
 
     @Transactional
     public void storePhonemeData(Long userId, TestResponseDto dto) { //임시 저장소
