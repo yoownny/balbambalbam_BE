@@ -104,9 +104,9 @@ public class PhonemeService {
     }
     private String getPhonemeType(Long type) {
         return switch (type.intValue()) {
-            case 0 -> "Initial consonant";
-            case 1 -> "Medial vowel";
-            case 2 -> "Final consonant";
+            case 0 -> "Initial Consonant";
+            case 1 -> "Vowel";
+            case 2 -> "Final Consonant";
             default -> "?";
         };
     }
