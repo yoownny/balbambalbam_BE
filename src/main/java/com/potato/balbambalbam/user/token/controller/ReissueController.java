@@ -70,7 +70,7 @@ public class ReissueController {
 
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
         refreshRepository.deleteBySocialId(socialId);
-        addRefreshEntity(socialId, newRefresh, 864000000L);
+        addRefreshEntity(socialId, newRefresh, 864000000L); // 10일
 
         response.setHeader("access", newAccess);
         response.setHeader("refresh", newRefresh);
