@@ -3,6 +3,7 @@ package com.potato.balbambalbam.home.learningCourse.service;
 import com.potato.balbambalbam.data.entity.*;
 import com.potato.balbambalbam.data.repository.*;
 import com.potato.balbambalbam.exception.CardNotFoundException;
+import com.potato.balbambalbam.home.customCard.dto.CustomCardDto;
 import com.potato.balbambalbam.home.learningCourse.dto.CourseResponseDto;
 import com.potato.balbambalbam.home.learningCourse.dto.ResponseCardDto;
 import jakarta.transaction.Transactional;
@@ -36,16 +37,16 @@ public class CardListService {
         return cardDtoList;
     }
 
-    public List<ResponseCardDto> getCustomCards(Long userId) {
+    public List<CustomCardDto> getCustomCards(Long userId) {
         List<CustomCard> customCardList = customCardRepository.findAllByUserId(userId);
-        List<ResponseCardDto> cardDtoList = new ArrayList<>();
+        List<CustomCardDto> cardDtoList = new ArrayList<>();
 
         customCardList.forEach(customCard -> {
             int highestScore = (customCard.getHighestScore() == null) ? 0 : customCard.getHighestScore();
-            cardDtoList.add(new ResponseCardDto
+            cardDtoList.add(new CustomCardDto
                     (customCard.getId(), customCard.getText(), customCard.getEngTranslation(), customCard.getEngPronunciation(),
                             customCard.getIsBookmarked(), false, highestScore,
-                            null, null));
+                            customCard.getTimeStamp()));
         });
 
         return cardDtoList;

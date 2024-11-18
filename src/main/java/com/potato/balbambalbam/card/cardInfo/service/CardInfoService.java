@@ -43,12 +43,11 @@ public class CardInfoService {
                 .correctAudio(voice)
                 .build();
 
-        if (card.getCategoryId() <= 1) {
+        if (card.getCategoryId() == 1 || card.getCategoryId() == 3) {
             PronunciationPicture pronunciationInfo = getPictureAndExplanation(card);
             cardInfoResponseDto.setExplanation(pronunciationInfo.getExplanation());
             cardInfoResponseDto.setPictureUrl("/images/" + pronunciationInfo.getPhonemeId() + ".png");
         }
-        //TODO : 받침 그림 추가 시 받침도 그림 전송
 
         return cardInfoResponseDto;
     }
@@ -60,8 +59,11 @@ public class CardInfoService {
             phonemeId = card.getPhonemesMap().get(1);
         }
         //자음인 경우
-        else {
+        else if(card.getCardId() <= 46) {
             phonemeId = card.getPhonemesMap().get(0);
+        }
+        else if(card.getCardId() >= 92 && card.getCardId() <= 135) {
+            phonemeId = card.getPhonemesMap().get(2);
         }
         return pronunciationPictureRepository.findByPhonemeId(phonemeId)
                 .orElseThrow(() -> new IllegalArgumentException("음절 설명 찾기에 실패했습니다"));

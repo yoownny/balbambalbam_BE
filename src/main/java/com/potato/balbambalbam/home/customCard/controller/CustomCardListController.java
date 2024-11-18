@@ -1,6 +1,7 @@
 package com.potato.balbambalbam.home.customCard.controller;
 
 import com.potato.balbambalbam.exception.dto.ExceptionDto;
+import com.potato.balbambalbam.home.customCard.dto.CustomCardDto;
 import com.potato.balbambalbam.home.learningCourse.dto.CardListResponseDto;
 import com.potato.balbambalbam.home.learningCourse.dto.ResponseCardDto;
 import com.potato.balbambalbam.home.learningCourse.service.CardListService;
@@ -36,11 +37,11 @@ public class CustomCardListController {
             @ApiResponse(responseCode = "200", description = "OK : 카드리스트 조회", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "ERROR : 존재하지 않는 카테고리 조회", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    public ResponseEntity<CardListResponseDto<List<ResponseCardDto>>> getCustomCardList(@RequestHeader("access") String access) {
+    public ResponseEntity<CardListResponseDto<List<CustomCardDto>>> getCustomCardList(@RequestHeader("access") String access) {
         Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
 
-        List<ResponseCardDto> cardDtoList = cardListService.getCustomCards(userId);
-        CardListResponseDto<List<ResponseCardDto>> response = new CardListResponseDto<>(cardDtoList, cardDtoList.size());
+        List<CustomCardDto> cardDtoList = cardListService.getCustomCards(userId);
+        CardListResponseDto<List<CustomCardDto>> response = new CardListResponseDto<>(cardDtoList, cardDtoList.size());
 
         return ResponseEntity.ok().body(response);
     }
