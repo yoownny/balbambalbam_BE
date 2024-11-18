@@ -26,7 +26,7 @@ public class CustomCardController {
     private final JoinService joinService;
     private final JWTUtil jwtUtil;
 
-    @PostMapping("/home/custom")
+    @PostMapping("/cards/custom")
     @Operation(summary = "customCard 생성", description = "text 해당하는 custom card를 생성한다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK : 카드 생성 완료", content = @Content(schema = @Schema(implementation = CustomCardResponseDto.class))),
@@ -40,7 +40,7 @@ public class CustomCardController {
         return ResponseEntity.ok().body(customCardResponse);
     }
 
-    @DeleteMapping("/home/custom/{cardId}")
+    @DeleteMapping("/cards/custom/{cardId}")
     @Operation(summary = "customCard 삭제", description = "원하는 custom card를 삭제한다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK : 카드 삭제 완료"),
