@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,7 @@ public class CustomCardService {
         customCardResponse.setText(customCard.getText());
         customCardResponse.setEngPronunciation(customCard.getEngPronunciation());
         customCardResponse.setEngTranslation(customCard.getEngTranslation());
+        customCardResponse.setCreatedAt(customCard.getTimeStamp());
 
         return customCardResponse;
     }
@@ -74,6 +76,7 @@ public class CustomCardService {
         customCard.setUserId(userId);
         customCard.setIsBookmarked(false);
         customCard.setEngTranslation(engTranslation);
+        customCard.setTimeStamp(LocalDateTime.now());
 
         return customCardRepository.save(customCard);
     }
