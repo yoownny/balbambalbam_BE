@@ -43,7 +43,6 @@ public class WeakSoundTestService {
     public void startNewTest(Long userId) {
         phonemeService.clearTemporaryData(userId);
         lastCardProgress.remove(userId);
-        log.info("Start new test for user: {}", userId);
     }
 
     public List<WeakSoundTestListDto> getAllTests() {
