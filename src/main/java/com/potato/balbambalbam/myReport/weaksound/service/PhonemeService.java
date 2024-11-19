@@ -8,6 +8,7 @@ import com.potato.balbambalbam.data.repository.UserWeakSoundRepository;
 import com.potato.balbambalbam.data.repository.WeakSoundTestSatusRepositoy;
 import com.potato.balbambalbam.exception.ResponseNotFoundException;
 import com.potato.balbambalbam.myReport.test.dto.TestResponseDto;
+import com.potato.balbambalbam.myReport.weaksound.dto.PhonemeResponseDto;
 import com.potato.balbambalbam.myReport.weaksound.dto.UserWeakSoundResponseDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -106,7 +107,20 @@ public class PhonemeService {
                 })
                 .collect(Collectors.toList());
     }
-    private String getPhonemeType(Long type) {
+
+    public List<PhonemeResponseDto> getAllPhonemes(Long userId) {
+        List<Phoneme> phonemes = phonemeRepository.findAll();
+
+        return phonemes.stream()
+                .map(phoneme -> new PhonemeResponseDto(
+                        phoneme.getId(),
+                        getPhonemeType(phoneme.getType()),
+                        phoneme.getText()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public String getPhonemeType(Long type) {
         return switch (type.intValue()) {
             case 0 -> "Initial Consonant";
             case 1 -> "Vowel";

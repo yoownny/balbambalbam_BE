@@ -1,9 +1,12 @@
 package com.potato.balbambalbam.myReport.weaksound.controller;
 
+import com.potato.balbambalbam.data.entity.Phoneme;
 import com.potato.balbambalbam.data.entity.WeakSoundTestStatus;
+import com.potato.balbambalbam.data.repository.PhonemeRepository;
 import com.potato.balbambalbam.data.repository.WeakSoundTestSatusRepositoy;
 import com.potato.balbambalbam.exception.dto.ExceptionDto;
 import com.potato.balbambalbam.exception.ResponseNotFoundException;
+import com.potato.balbambalbam.myReport.weaksound.dto.PhonemeResponseDto;
 import com.potato.balbambalbam.myReport.weaksound.dto.UserWeakSoundResponseDto;
 import com.potato.balbambalbam.myReport.weaksound.service.PhonemeService;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
@@ -15,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,6 +37,7 @@ public class PhonemeController {
     private final JWTUtil jwtUtil;
     private final WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy;
     private final PhonemeService phonemeService;
+    private final PhonemeRepository phonemeRepository;
 
     private Long extractUserIdFromToken(String access) {
         String socialId = jwtUtil.getSocialId(access);
@@ -61,8 +66,7 @@ public class PhonemeController {
             @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
     })
     @GetMapping("/test/phonemes")
-    public ResponseEntity<List<UserWeakSoundResponseDto>> getWeakPhonemesByUserId(
-            @RequestHeader("access") String access) {
+    public ResponseEntity<List<UserWeakSoundResponseDto>> getWeakPhonemesByUserId(@RequestHeader("access") String access) {
         Long userId = extractUserIdFromToken(access);
         List<UserWeakSoundResponseDto> weakPhonemes = phonemeService.getWeakPhonemes(userId);
         if (weakPhonemes.isEmpty()) {
@@ -71,15 +75,25 @@ public class PhonemeController {
         return ResponseEntity.ok(weakPhonemes);
     }
 
+    @Operation(summary = "전체 음소 목록 조회", description = "초성, 중성, 종성으로 분류된 전체 음소 목록을 제공한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "전체 음소 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PhonemeResponseDto.class))),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @GetMapping("/test/all/phonemes")
+    public ResponseEntity<List<PhonemeResponseDto>> getAllPhonemes(@RequestHeader("access") String access) {
+        Long userId = extractUserIdFromToken(access);
+        List<PhonemeResponseDto> phonemeResponseDtos = phonemeService.getAllPhonemes(userId);
+        return ResponseEntity.ok(phonemeResponseDtos);
+    }
+
     @Operation(summary = "사용자의 취약음소 삭제", description = "사용자의 취약음소를 삭제한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "사용자의 취약음소가 삭제된 경우", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "사용자의 취약음소가 삭제되었습니다."))),
             @ApiResponse(responseCode = "500", description = "서버 오류가 발생한 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
     })
     @DeleteMapping("test/phonemes/{phonemeId}")
-    public ResponseEntity<?> deleteWeakPhoneme(
-            @RequestHeader("access") String access,
-            @PathVariable Long phonemeId) {
+    public ResponseEntity<?> deleteWeakPhoneme(@RequestHeader("access") String access, @PathVariable Long phonemeId) {
         Long userId = extractUserIdFromToken(access);
         phonemeService.deleteWeakPhoneme(userId, phonemeId);
         return ResponseEntity.ok("사용자의 취약음소가 삭제되었습니다.");
