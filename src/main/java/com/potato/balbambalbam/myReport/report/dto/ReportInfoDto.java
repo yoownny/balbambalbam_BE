@@ -26,9 +26,6 @@ public class ReportInfoDto {
     @Schema(description = "이번 주 평균 학습 카드 수")
     private Long weeklyAverageCards;
 
-    @Schema(description = "일주일 최대 학습량의 상한값")
-    private Long weeklyMaxScale;
-
     @Schema(description = "일요일 학습 카드 수")
     private Long sundayCards;
 

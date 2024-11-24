@@ -86,21 +86,12 @@ public class ReportInfoService {
         reportInfoDto.setFridayCards(cardsByDay.get(DayOfWeek.FRIDAY));
         reportInfoDto.setSaturdayCards(cardsByDay.get(DayOfWeek.SATURDAY));
 
-        // 5. 일주일 중 최대 학습량을 기준으로 10단위 상한값 계산
-        long maxDailyCards = cardsByDay.values().stream()
-                .mapToLong(Long::longValue)
-                .max()
-                .orElse(0L);
 
-        // 10단위로 올림 계산 (예: 17 -> 20, 21 -> 30)
-        long maxScaleValue = ((maxDailyCards + 9) / 10) * 10;
-        reportInfoDto.setWeeklyMaxScale(maxScaleValue);
-
-        // 6. 이번 주 평균 카드 수 계산
+        // 5. 이번 주 평균 카드 수 계산
         long totalWeeklyCards = weeklyCardScores.size();
         reportInfoDto.setWeeklyAverageCards(daysFromSunday > 0 ? totalWeeklyCards / daysFromSunday : 0);
 
-        // 7. 취약 음소 목록 조회
+        // 6. 취약 음소 목록 조회
         reportInfoDto.setWeakPhonemes(phonemeService.getWeakPhonemes(userId));
 
         return reportInfoDto;
