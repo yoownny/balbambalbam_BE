@@ -108,16 +108,41 @@ public class PhonemeService {
                 .collect(Collectors.toList());
     }
 
-    public List<PhonemeResponseDto> getAllPhonemes(Long userId) {
-        List<Phoneme> phonemes = phonemeRepository.findAll();
+    public List<PhonemeResponseDto> getAllPhonemesWithWeakStatus(Long userId) {
+        // 사용자의 취약음소 ID 목록 조회
+        Set<Long> userWeakPhonemeIds = userWeakSoundRepository.findAllByUserId(userId)
+                .stream()
+                .map(UserWeakSound::getUserPhoneme)
+                .collect(Collectors.toSet());
 
-        return phonemes.stream()
+        // 전체 음소 목록 조회 및 취약음소 여부 설정
+        return phonemeRepository.findAll().stream()
                 .map(phoneme -> new PhonemeResponseDto(
                         phoneme.getId(),
                         getPhonemeType(phoneme.getType()),
-                        phoneme.getText()
+                        phoneme.getText(),
+                        userWeakPhonemeIds.contains(phoneme.getId())
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void addWeakPhonemes(Long userId, List<Long> phonemeIds) {
+        // 이미 존재하는 취약음소 ID 목록 조회
+        Set<Long> existingPhonemeIds = userWeakSoundRepository.findAllByUserId(userId)
+                .stream()
+                .map(UserWeakSound::getUserPhoneme)
+                .collect(Collectors.toSet());
+
+        // 새로운 취약음소만 추가
+        List<UserWeakSound> newWeakSounds = phonemeIds.stream()
+                .filter(id -> !existingPhonemeIds.contains(id))
+                .map(id -> new UserWeakSound(userId, id))
+                .collect(Collectors.toList());
+
+        if (!newWeakSounds.isEmpty()) {
+            userWeakSoundRepository.saveAll(newWeakSounds);
+        }
     }
 
     public String getPhonemeType(Long type) {

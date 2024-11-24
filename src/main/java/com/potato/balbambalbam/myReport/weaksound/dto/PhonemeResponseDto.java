@@ -9,4 +9,5 @@ public class PhonemeResponseDto {
     private Long id;
     private String type;
     private String text;
+    private boolean isWeak;
 }
