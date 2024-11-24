@@ -18,12 +18,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -75,16 +78,27 @@ public class PhonemeController {
         return ResponseEntity.ok(weakPhonemes);
     }
 
-    @Operation(summary = "전체 음소 목록 조회", description = "초성, 중성, 종성으로 분류된 전체 음소 목록을 제공한다.")
+    @Operation(summary = "전체 음소 목록과 취약음소 여부 조회", description = "초성, 중성, 종성으로 분류된 전체 음소 목록과 각 음소의 취약음소 여부를 제공한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전체 음소 목록 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PhonemeResponseDto.class))),
+            @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PhonemeResponseDto.class))),
             @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
     })
-    @GetMapping("/test/all/phonemes")
-    public ResponseEntity<List<PhonemeResponseDto>> getAllPhonemes(@RequestHeader("access") String access) {
+    @GetMapping("/test/all")
+    public ResponseEntity<List<PhonemeResponseDto>> getAllPhonemesWithWeakStatus(@RequestHeader("access") String access) {
         Long userId = extractUserIdFromToken(access);
-        List<PhonemeResponseDto> phonemeResponseDtos = phonemeService.getAllPhonemes(userId);
-        return ResponseEntity.ok(phonemeResponseDtos);
+        return ResponseEntity.ok(phonemeService.getAllPhonemesWithWeakStatus(userId));
+    }
+
+    @Operation(summary = "취약음소 추가", description = "선택한 음소들을 사용자의 취약음소로 추가한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "추가 성공", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "취약음소가 추가되었습니다."))),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @PostMapping("/test/add")
+    public ResponseEntity<?> addWeakPhonemes(@RequestHeader("access") String access, @RequestBody List<Long> phonemeIds) {
+        Long userId = extractUserIdFromToken(access);
+        phonemeService.addWeakPhonemes(userId, phonemeIds);
+        return ResponseEntity.ok("취약음소가 추가되었습니다.");
     }
 
     @Operation(summary = "사용자의 취약음소 삭제", description = "사용자의 취약음소를 삭제한다.")
