@@ -68,9 +68,11 @@ public class UserLevelService {
     }
 
     private boolean hasMaxScore(Long cardId, UserLevel userLevel) {
-        return cardScoreRepository.findByCardIdAndUserId(cardId, userLevel.getUserId())
-                .map(cardScore -> cardScore.getHighestScore() == 100)
-                .orElse(false);
+        if(cardScoreRepository.findById(cardId).isPresent()) {
+            if(cardScoreRepository.findById(cardId).get().getHighestScore() == 100) return true;
+        }
+
+        return false;
     }
 
     @Transactional
@@ -85,8 +87,10 @@ public class UserLevelService {
     }
 
     private boolean hasCustomCardMaxScore(Long cardId, UserLevel userLevel) {
-        return customCardRepository.findById(cardId)
-                .map(card -> card.getHighestScore() == 100)
-                .orElse(false);
+        if(customCardRepository.findById(cardId).isPresent()) {
+            if(customCardRepository.findById(cardId).get().getHighestScore() == 100) return true;
+        }
+
+        return false;
     }
 }
