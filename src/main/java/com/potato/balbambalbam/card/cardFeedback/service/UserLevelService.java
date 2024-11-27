@@ -6,12 +6,15 @@ import com.potato.balbambalbam.data.entity.UserLevel;
 import com.potato.balbambalbam.data.repository.*;
 import com.potato.balbambalbam.exception.CardNotFoundException;
 import com.potato.balbambalbam.exception.UserNotFoundException;
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserLevelService {
     private final UserLevelRepository userLevelRepository;
     private final LevelRepository levelRepository;
@@ -19,6 +22,7 @@ public class UserLevelService {
     private final CardRepository cardRepository;
     private final CardScoreRepository cardScoreRepository;
 
+    @Transactional
     public void updateUserLevelInfo(Long cardId, Long userId) {
         UserLevel userLevel = userLevelRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다"));
         //경험치 update
@@ -27,6 +31,7 @@ public class UserLevelService {
         updateUserLevel(userLevel);
     }
 
+    @Transactional
     public void updateCustomCardUserLevelInfo(Long cardId, Long userId) {
         UserLevel userLevel = userLevelRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다"));
         //경험치 update
@@ -35,7 +40,7 @@ public class UserLevelService {
         updateUserLevel(userLevel);
     }
 
-    @Transactional
+
     protected void updateUserLevel(UserLevel userLevel) {
         Level currentLevel = levelRepository.findByLevelId(userLevel.getLevelId()).get();
         if(userLevel.getLevelId() == 25) return;
@@ -46,26 +51,42 @@ public class UserLevelService {
         }
     }
 
-    @Transactional
     protected void updateUserExperience(Long cardId, UserLevel userLevel) {
         Long categoryId = cardRepository.findByCardId(cardId).orElseThrow(() -> new CardNotFoundException("존재하지 않는 카드입니다.")).getCategoryId();
 
-        if(cardScoreRepository.existsByCardIdAndUserId(cardId, userLevel.getUserId())) return;
+        if(hasMaxScore(cardId, userLevel)) {
+            return;
+        }
 
         int experience;
         if (categoryId < 5) experience = 1;
         else if (categoryId < 15) experience = 5;
         else experience = 10;
         userLevel.setUserExperience(userLevel.getUserExperience() + experience);
-        userLevelRepository.save(userLevel);
+
+        userLevelRepository.saveAndFlush(userLevel);
+    }
+
+    private boolean hasMaxScore(Long cardId, UserLevel userLevel) {
+        return cardScoreRepository.findByCardIdAndUserId(cardId, userLevel.getUserId())
+                .map(cardScore -> cardScore.getHighestScore() == 100)
+                .orElse(false);
     }
 
     @Transactional
     protected void updateUserCustomExperience(Long cardId, UserLevel userLevel) {
-        CustomCard customCard = customCardRepository.findById(cardId).get();
-        if(customCard.getHighestScore() != null) return;
+        if(hasCustomCardMaxScore(cardId, userLevel)) {
+            return;
+        }
+
         int experience = 10;
         userLevel.setUserExperience(userLevel.getUserExperience() + experience);
         userLevelRepository.save(userLevel);
+    }
+
+    private boolean hasCustomCardMaxScore(Long cardId, UserLevel userLevel) {
+        return customCardRepository.findById(cardId)
+                .map(card -> card.getHighestScore() == 100)
+                .orElse(false);
     }
 }
