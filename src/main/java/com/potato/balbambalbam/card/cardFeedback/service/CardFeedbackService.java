@@ -183,6 +183,7 @@ public class CardFeedbackService {
         UserFeedbackResponseDto userFeedbackResponseDto = new UserFeedbackResponseDto();
         userFeedbackResponseDto.setCardId(cardId);
         userFeedbackResponseDto.setUserScore(aiFeedback.getUserAccuracy());
+        userFeedbackResponseDto.setUserText(aiFeedback.getUserText());
         userFeedbackResponseDto.setRecommendCard(recommendCard);
         userFeedbackResponseDto.setUserAudio(userAudio);
         userFeedbackResponseDto.setCorrectAudio(correctAudio);

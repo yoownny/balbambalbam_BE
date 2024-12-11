@@ -22,6 +22,9 @@ public class UserFeedbackResponseDto {
     @Schema(example = "[0, 1]")
     private List<Integer> mistakenIndexes;
 
+    @Schema(example = "사용자가 발음한 소리")
+    private String userText;
+
     @Schema(example = "100")
     private Integer userScore;
 
