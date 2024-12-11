@@ -94,7 +94,6 @@ public class MainExceptionResolverController extends ResponseEntityExceptionHand
     protected ResponseEntity<ExceptionDto> exceptionHandler(Exception ex, HttpStatusCode httpStatus) {
         String className = extractClassName(ex.getClass().toString());
         String exMessage = ex.getMessage();
-        log.info("[{}]: {}", className, exMessage);
         return ResponseEntity.status(httpStatus).body(new ExceptionDto(httpStatus.value(), className, exMessage));
     }
 

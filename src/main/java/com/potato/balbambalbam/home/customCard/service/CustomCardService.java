@@ -77,6 +77,7 @@ public class CustomCardService {
         customCard.setIsBookmarked(false);
         customCard.setEngTranslation(engTranslation);
         customCard.setTimeStamp(LocalDateTime.now());
+        customCard.setHighestScore(0);
 
         return customCardRepository.save(customCard);
     }
