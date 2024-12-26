@@ -17,7 +17,11 @@ import java.time.Duration;
 @Service
 @Slf4j
 public class AiCardFeedbackService {
-    WebClient webClient = WebClient.builder().build();
+    WebClient webClient = WebClient.builder()
+            .codecs(configurer -> configurer
+                    .defaultCodecs()
+                    .maxInMemorySize(5 * 1024 * 1024)) // 5MB
+            .build();
     @Value("${ai.service.url}")
     private String AI_URL;
 
