@@ -34,6 +34,7 @@ public class CardFeedbackService {
     private final PhonemeRepository phonemeRepository;
     private final CardInfoService cardInfoService;
 
+    @Transactional
     public UserFeedbackResponseDto postUserFeedback(UserFeedbackRequestDto userFeedbackRequestDto, Long userId, Long cardId) {
         Long categoryId = cardRepository.findById(cardId).orElseThrow(() -> new CardNotFoundException("카드가 존재하지 않습니다")).getCategoryId();
         //인공지능서버와 통신
@@ -86,7 +87,6 @@ public class CardFeedbackService {
      * @param cardId
      * @param userScore
      */
-    @Transactional
     public void updateScoreIfLarger(Long userId, Long cardId, Integer userScore) {
         Optional<CardScore> optionalCardScore = cardScoreRepository.findByCardIdAndUserId(cardId, userId);
 
