@@ -9,9 +9,8 @@ import lombok.Setter;
 @Setter
 public class Refresh {
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    private Long userId;
     @Column(name = "social_id", nullable = false)
     private String socialId;
     @Column(name = "refresh", nullable = false)

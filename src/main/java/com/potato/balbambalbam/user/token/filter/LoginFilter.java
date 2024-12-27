@@ -64,6 +64,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                                             Authentication authentication) throws IOException {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = customUserDetails.getUserId();
         String socialId = customUserDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -72,25 +73,26 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         // 토큰 생성
-        String access = jwtUtil.createJwt("access", socialId, role, 7200000L); // 7200000L 2시간
-        String refresh = jwtUtil.createJwt("refresh", socialId, role, 864000000L); // 86400000L 24시간
+        String access = jwtUtil.createJwt("access", userId, socialId, role, 7200000L); // 7200000L 2시간
+        String refresh = jwtUtil.createJwt("refresh", userId, socialId, role, 864000000L); // 86400000L 24시간
 
         response.setHeader("access", access);
         response.setHeader("refresh", refresh);
 
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
         refreshRepository.deleteBySocialId(socialId);
-        addRefreshEntity(socialId, refresh, 864000000L);
+        addRefreshEntity(userId, socialId, refresh, 864000000L);
 
         response.setContentType("text/plain; charset=UTF-8");
         response.getWriter().print("로그인이 완료되었습니다.");
     }
 
-    private void addRefreshEntity(String socialId, String refresh, Long expiredMs) {
+    private void addRefreshEntity(Long userId, String socialId, String refresh, Long expiredMs) {
 
         Date date = new Date(System.currentTimeMillis() + expiredMs);
 
         Refresh refreshEntity = new Refresh();
+        refreshEntity.setUserId(userId);
         refreshEntity.setSocialId(socialId);
         refreshEntity.setRefresh(refresh);
         refreshEntity.setExpiration(date.toString());
