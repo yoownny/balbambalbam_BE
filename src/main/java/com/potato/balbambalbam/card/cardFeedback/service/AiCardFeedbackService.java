@@ -28,7 +28,7 @@ public class AiCardFeedbackService {
     public AiFeedbackResponseDto postAiFeedback(AiFeedbackRequestDto aiFeedbackRequestDto) {
 
         AiFeedbackResponseDto aiFeedbackResponseDto = webClient.post()
-                .uri(AI_URL + "/ai/feedback-test")
+                .uri(AI_URL + "/ai/feedback")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(aiFeedbackRequestDto), AiFeedbackRequestDto.class)
                 .retrieve()//요청
