@@ -23,14 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "Attendance API", description = "전체 출석 정보를 보여준다.")
 public class AttendanceController {
-    private final JoinService joinService;
     private final JWTUtil jwtUtil;
     private final AttendanceService attendanceService;
-
-    private Long extractUserIdFromToken(String access) { // access 토큰으로부터 userId 추출하는 함수
-        String socialId = jwtUtil.getSocialId(access);
-        return joinService.findUserBySocialId(socialId).getId();
-    }
 
     @Operation(summary = "사용자 출석 날짜 조회", description = "사용자의 월별 출석 날짜를 조회합니다.")
     @ApiResponses(value = {
@@ -39,7 +33,7 @@ public class AttendanceController {
     })
     @GetMapping("/home/attendance")
     public ResponseEntity<AttendanceResponseDto> getAttendanceDates(@RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         Map<String, List<Integer>> attendanceDates = attendanceService.getAttendanceDates(userId);
         return ResponseEntity.ok(new AttendanceResponseDto(attendanceDates));
     }
