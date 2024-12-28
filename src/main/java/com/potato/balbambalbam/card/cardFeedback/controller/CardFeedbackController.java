@@ -48,8 +48,8 @@ public class CardFeedbackController {
 
         Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
 
-        userLevelService.updateUserLevelInfo(cardId, userId);
         UserFeedbackResponseDto userFeedbackResponseDto = cardFeedbackService.postUserFeedback(userFeedbackRequestDto, userId, cardId);
+        userLevelService.updateUserLevelInfo(cardId, userId, userFeedbackResponseDto.getUserScore());
 
         return ResponseEntity.ok().body(userFeedbackResponseDto);
     }
@@ -68,8 +68,8 @@ public class CardFeedbackController {
                                                          @RequestHeader("access") String access)  {
         Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
 
-        userLevelService.updateCustomCardUserLevelInfo(cardId, userId);
         UserFeedbackResponseDto userFeedbackResponseDto = customCardFeedbackService.postUserFeedback(userFeedbackRequestDto, cardId, userId);
+        userLevelService.updateCustomCardUserLevelInfo(cardId, userId, userFeedbackResponseDto.getUserScore());
 
         return ResponseEntity.ok().body(userFeedbackResponseDto);
     }
@@ -88,8 +88,8 @@ public class CardFeedbackController {
                                                          @RequestHeader("access") String access)  {
         Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
 
-        userLevelService.updateCustomCardUserLevelInfo(cardId, userId);
         UserFeedbackResponseDto userFeedbackResponseDto = todayCardFeedbackService.postUserFeedback(userFeedbackRequestDto, cardId, userId);
+        userLevelService.updateCustomCardUserLevelInfo(cardId, userId, userFeedbackResponseDto.getUserScore());
 
         return ResponseEntity.ok().body(userFeedbackResponseDto);
     }

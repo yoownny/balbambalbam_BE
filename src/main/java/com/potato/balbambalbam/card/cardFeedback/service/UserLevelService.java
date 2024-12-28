@@ -23,7 +23,8 @@ public class UserLevelService {
     private final CardScoreRepository cardScoreRepository;
 
     @Transactional
-    public void updateUserLevelInfo(Long cardId, Long userId) {
+    public void updateUserLevelInfo(Long cardId, Long userId, Integer score) {
+        if(score == 0 || score == null) return;
         UserLevel userLevel = userLevelRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다"));
         //경험치 update
         updateUserExperience(cardId, userLevel);
@@ -32,7 +33,8 @@ public class UserLevelService {
     }
 
     @Transactional
-    public void updateCustomCardUserLevelInfo(Long cardId, Long userId) {
+    public void updateCustomCardUserLevelInfo(Long cardId, Long userId, Integer score) {
+        if(score == 0 || score == null) return;
         UserLevel userLevel = userLevelRepository.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다"));
         //경험치 update
         updateUserCustomExperience(cardId, userLevel);
