@@ -34,6 +34,11 @@ public class CustomLogoutFilter extends GenericFilterBean {
         return socialId;
     }
 
+    private Long extractUserIdFromToken(String access) {
+        Long userId = jwtUtil.getUserId(access);
+        return userId;
+    }
+
     @Override
     public void doFilter(ServletRequest request,
                          ServletResponse response,
@@ -63,8 +68,12 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         String socialId;
+        Long userId;
+
         try {
             socialId = extractSocialIdFromToken(access);
+            userId = extractUserIdFromToken(access);
+
         } catch (Exception e) {
             sendError(response, HttpServletResponse.SC_BAD_REQUEST, "InvalidAccessToken", "access 토큰이 유효하지 않습니다.");
             return;
@@ -82,7 +91,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
-        refreshRepository.deleteBySocialId(socialId);
+        refreshRepository.deleteBySocialIdAndUserId(socialId, userId);
 
         response.setContentType("text/plain; charset=UTF-8");
         response.getWriter().print("로그아웃이 완료되었습니다.");

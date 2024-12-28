@@ -9,6 +9,7 @@ import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -25,6 +26,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
+@RequiredArgsConstructor
 @Slf4j
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -32,16 +34,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     private final ObjectMapper objectMapper;
-
-    public LoginFilter(AuthenticationManager authenticationManager,
-                       JWTUtil jwtUtil,
-                       RefreshRepository refreshRepository,
-                       ObjectMapper objectMapper) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.refreshRepository = refreshRepository;
-        this.objectMapper = objectMapper;
-    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
@@ -80,7 +72,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setHeader("refresh", refresh);
 
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
-        refreshRepository.deleteBySocialId(socialId);
+        refreshRepository.deleteBySocialIdAndUserId(socialId, userId);
         addRefreshEntity(userId, socialId, refresh, 864000000L);
 
         response.setContentType("text/plain; charset=UTF-8");

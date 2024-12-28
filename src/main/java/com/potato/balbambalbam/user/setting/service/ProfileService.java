@@ -83,7 +83,7 @@ public class ProfileService {
             userAttendanceRepository.deleteByUserId(userId);
         }
 
-        refreshRepository.deleteBySocialId(user.getSocialId());
+        refreshRepository.deleteBySocialIdAndUserId(user.getSocialId() , user.getId());
         userRepository.deleteById(userId);
     }
 
