@@ -21,10 +21,10 @@ import java.util.List;
 public class CardListService {
     private final CardRepository cardRepository;
     private final CardBookmarkRepository cardBookmarkRepository;
-    private final CardWeakSoundRepository cardWeakSoundRepository;
     private final CardScoreRepository cardScoreRepository;
     private final CustomCardRepository customCardRepository;
     private final PronunciationPictureRepository pronunciationPictureRepository;
+    private final UserWeakSoundRepository userWeakSoundRepository;
 
     /**
      * controller getCardList 요청 처리
@@ -33,7 +33,6 @@ public class CardListService {
      */
     public List<ResponseCardDto> getCardsByCategory(Long categoryId, Long userId) {
         List<ResponseCardDto> cardDtoList = createCardDtoListForCategory(categoryId, userId);
-
         return cardDtoList;
     }
 
@@ -59,7 +58,8 @@ public class CardListService {
         List<Card> cardList = cardRepository.findAllByCategoryId(categoryId);
         List<ResponseCardDto> cardDtoList = new ArrayList<>();
 
-        cardList.stream().forEach(card -> cardDtoList.add(convertCardToDto(card, userId)));
+        List<Long> userWeakSounds = userWeakSoundRepository.findAllByUserId(userId).stream().map(UserWeakSound::getUserPhoneme).toList();
+        cardList.forEach(card -> cardDtoList.add(convertCardToDto(card, userId, userWeakSounds)));
 
         return cardDtoList;
     }
@@ -68,9 +68,10 @@ public class CardListService {
      * Card Entity를 ResponseCardDto에 맞게 변환
      *
      * @param card
+     * @param userWeakSounds
      * @return
      */
-    protected ResponseCardDto convertCardToDto(Card card, Long userId) {
+    protected ResponseCardDto convertCardToDto(Card card, Long userId, List<Long> userWeakSounds) {
         ResponseCardDto responseCardDto = new ResponseCardDto();
 
         Long cardId = card.getCardId();
@@ -78,10 +79,12 @@ public class CardListService {
         responseCardDto.setText(card.getText());
 
         responseCardDto.setCardScore(cardScoreRepository.findByCardIdAndUserId(cardId, userId).map(CardScore::getHighestScore).orElse(0));  //사용자 점수가 없으면 0점
-        responseCardDto.setWeakCard(cardWeakSoundRepository.existsByCardIdAndUserId(cardId, userId));
         responseCardDto.setBookmark(cardBookmarkRepository.existsByCardIdAndUserId(cardId, userId));
         responseCardDto.setEngTranslation(card.getCardTranslation());
         responseCardDto.setEngPronunciation(card.getCardPronunciation());
+
+        //취약음 확인
+        responseCardDto.setWeakCard(isWeakSoundCard(card.getPhonemesMap(), userWeakSounds));
 
         //level 1 이라면 사진과 설명 제공
         if (card.getCategoryId() == 1) {
@@ -104,6 +107,11 @@ public class CardListService {
 
         return responseCardDto;
     }
+
+    private boolean isWeakSoundCard(List<Long> cardPhonemes, List<Long> userPhonemes) {
+        return cardPhonemes.stream().anyMatch(userPhonemes::contains);
+    }
+
 
     /**
      * 카드 북마크 업데이트

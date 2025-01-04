@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class CardListController {
             @ApiResponse(responseCode = "200", description = "OK : 카드리스트 조회", useReturnTypeSchema = true),
             @ApiResponse(responseCode = "400", description = "ERROR : 존재하지 않는 카테고리 조회", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
-    public ResponseEntity<CardListResponseDto<List<ResponseCardDto>>> getCardList(@RequestParam("level") Long level,
+    public ResponseEntity<CardListResponseDto<List<ResponseCardDto>>> getCardList(@PathVariable("level") Long level,
                                                                                   @RequestHeader("access") String access){
         Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
 

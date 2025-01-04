@@ -20,7 +20,6 @@ public class CardInfoService {
 
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
-    private final CardWeakSoundRepository cardWeakSoundRepository;
     private final CardVoiceRepository cardVoiceRepository;
     private final PronunciationPictureRepository pronunciationPictureRepository;
 
@@ -39,7 +38,7 @@ public class CardInfoService {
                 .text(card.getText())
                 .cardPronunciation(card.getCardPronunciation())
                 .cardTranslation(card.getCardTranslation())
-                .isWeakCard(cardWeakSoundRepository.existsByCardIdAndUserId(cardId, userId))
+                .isWeakCard(false)
                 .correctAudio(voice)
                 .build();
 

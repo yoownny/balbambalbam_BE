@@ -4,7 +4,6 @@ import com.potato.balbambalbam.data.entity.Card;
 import com.potato.balbambalbam.data.entity.CardScore;
 import com.potato.balbambalbam.data.repository.CardRepository;
 import com.potato.balbambalbam.data.repository.CardScoreRepository;
-import com.potato.balbambalbam.data.repository.CardWeakSoundRepository;
 import com.potato.balbambalbam.home.menu.dto.CardDto;
 import com.potato.balbambalbam.home.menu.dto.MissedCardResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ import java.util.stream.Collectors;
 public class MissedCardsService {
     private final CardRepository cardRepository;
     private final CardScoreRepository cardScoreRepository;
-    private final CardWeakSoundRepository cardWeakSoundRepository;
 
     public MissedCardResponseDto getCards(Long userId) {
         return new MissedCardResponseDto(createCardDtoListForCategory(userId));
@@ -62,7 +60,7 @@ public class MissedCardsService {
                     cardDtoList.add(new CardDto(card.getCardId(), card.getText(),
                             card.getCardPronunciation(),
                             true,
-                            cardWeakSoundRepository.existsByCardIdAndUserId(cardId, userId),
+                            false,
                             cardScoreRepository.findByCardIdAndUserId(cardId, userId)
                                     .map(CardScore::getHighestScore)
                                     .orElse(0)));

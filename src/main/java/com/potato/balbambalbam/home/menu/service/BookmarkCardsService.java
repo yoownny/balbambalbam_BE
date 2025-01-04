@@ -2,7 +2,9 @@ package com.potato.balbambalbam.home.menu.service;
 
 import com.potato.balbambalbam.data.entity.CardBookmark;
 import com.potato.balbambalbam.data.entity.CardScore;
-import com.potato.balbambalbam.data.repository.*;
+import com.potato.balbambalbam.data.repository.CardBookmarkRepository;
+import com.potato.balbambalbam.data.repository.CardRepository;
+import com.potato.balbambalbam.data.repository.CardScoreRepository;
 import com.potato.balbambalbam.home.menu.dto.BookmarkCardResponseDto;
 import com.potato.balbambalbam.home.menu.dto.CardDto;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class BookmarkCardsService {
-    private final UserRepository userRepository;
     private final CardRepository cardRepository;
     private final CardBookmarkRepository cardBookmarkRepository;
-    private final CardWeakSoundRepository cardWeakSoundRepository;
     private final CardScoreRepository cardScoreRepository;
 
     public BookmarkCardResponseDto getCards(Long userId) {
@@ -31,7 +31,7 @@ public class BookmarkCardsService {
             cardList.add(new CardDto(card.getCardId(), card.getText(),
                     card.getCardPronunciation(),
                     true,
-                    cardWeakSoundRepository.existsByCardIdAndUserId(cardId, userId),
+                    false,
                     cardScoreRepository.findByCardIdAndUserId(cardId, userId)
                             .map(CardScore::getHighestScore)
                             .orElse(0)));

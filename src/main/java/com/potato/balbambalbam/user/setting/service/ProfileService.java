@@ -3,7 +3,6 @@ package com.potato.balbambalbam.user.setting.service;
 import com.potato.balbambalbam.data.entity.User;
 import com.potato.balbambalbam.data.repository.CardBookmarkRepository;
 import com.potato.balbambalbam.data.repository.CardScoreRepository;
-import com.potato.balbambalbam.data.repository.CardWeakSoundRepository;
 import com.potato.balbambalbam.data.repository.CustomCardRepository;
 import com.potato.balbambalbam.data.repository.RefreshRepository;
 import com.potato.balbambalbam.data.repository.UserAttendanceRepository;
@@ -26,7 +25,6 @@ public class ProfileService {
     private final RefreshRepository refreshRepository;
     private final CardBookmarkRepository cardBookmarkRepository;
     private final CardScoreRepository cardScoreRepository;
-    private final CardWeakSoundRepository cardWeakSoundRepository;
     private final CustomCardRepository customCardRepository;
     private final UserWeakSoundRepository userWeakSoundRepository;
     private final WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy;
@@ -63,9 +61,6 @@ public class ProfileService {
         }
         if (cardScoreRepository.existsByUserId(userId)) {
             cardScoreRepository.deleteByUserId(userId);
-        }
-        if (cardWeakSoundRepository.existsByUserId(userId)) {
-            cardWeakSoundRepository.deleteByUserId(userId);
         }
         if (customCardRepository.existsByUserId(userId)) {
             customCardRepository.deleteUserById(userId);
