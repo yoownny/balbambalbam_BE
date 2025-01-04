@@ -17,6 +17,7 @@ bin/
 /build/test-results
 /build/generated
 /build/tmp
+/build/libs
 resolvedMainClassName
 .gradle
 
