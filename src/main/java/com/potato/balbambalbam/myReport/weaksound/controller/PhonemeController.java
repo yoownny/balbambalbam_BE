@@ -65,7 +65,7 @@ public class PhonemeController {
     @GetMapping("/test/all")
     public ResponseEntity<List<PhonemeResponseDto>> getAllPhonemesWithWeakStatus(@RequestHeader("access") String access) {
         Long userId = extractUserIdFromToken(access);
-        return ResponseEntity.ok(phonemeService.getAllPhonemesWithWeakStatus(userId));
+        return ResponseEntity.ok(phonemeService.getAllPhonemes(userId));
     }
 
     @Operation(summary = "취약음소 추가", description = "선택한 음소들을 사용자의 취약음소로 추가한다.")
@@ -90,17 +90,5 @@ public class PhonemeController {
         Long userId = extractUserIdFromToken(access);
         phonemeService.deleteWeakPhoneme(userId, phonemeId);
         return ResponseEntity.ok("사용자의 취약음소가 삭제되었습니다.");
-    }
-
-    @Operation(summary = "사용자의 전체 취약음소 삭제", description = "사용자의 전체 취약음소를 삭제한다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "사용자의 취약음소가 삭제된 경우", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "사용자의 전체 취약음소 데이터가 삭제되었습니다."))),
-            @ApiResponse(responseCode = "500", description = "서버 오류가 발생한 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
-    })
-    @DeleteMapping("test/all/phonemes")
-    public ResponseEntity<?> deleteAllWeakPhonemesAndStatus(@RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
-        phonemeService.deleteAllWeakPhonemesAndStatus(userId);
-        return ResponseEntity.ok("사용자의 전체 취약음소 데이터가 삭제되었습니다.");
     }
 }

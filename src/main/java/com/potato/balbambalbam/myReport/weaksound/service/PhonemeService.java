@@ -71,15 +71,6 @@ public class PhonemeService {
     }
 
     @Transactional
-    public void deleteAllWeakPhonemesAndStatus(Long userId) {
-        // 모든 취약음소 삭제
-        List<UserWeakSound> userWeakSounds = userWeakSoundRepository.findAllByUserId(userId);
-        if (!userWeakSounds.isEmpty()) {
-            userWeakSoundRepository.deleteAll(userWeakSounds);
-        }
-    }
-
-    @Transactional
     public List<UserWeakSoundResponseDto> getWeakPhonemes(Long userId) {
         List<UserWeakSound> weakPhonemes = userWeakSoundRepository.findAllByUserId(userId);
         if (weakPhonemes.isEmpty()) {
@@ -100,7 +91,7 @@ public class PhonemeService {
                 .collect(Collectors.toList());
     }
 
-    public List<PhonemeResponseDto> getAllPhonemesWithWeakStatus(Long userId) {
+    public List<PhonemeResponseDto> getAllPhonemes(Long userId) {
         // 사용자의 취약음소 ID 목록 조회
         Set<Long> userWeakPhonemeIds = userWeakSoundRepository.findAllByUserId(userId)
                 .stream()
