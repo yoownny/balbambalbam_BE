@@ -3,16 +3,13 @@ package com.potato.balbambalbam.myReport.test.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.potato.balbambalbam.data.entity.UserWeakSound;
 import com.potato.balbambalbam.data.entity.WeakSoundTest;
-import com.potato.balbambalbam.data.entity.WeakSoundTestStatus;
 import com.potato.balbambalbam.data.repository.UserWeakSoundRepository;
 import com.potato.balbambalbam.data.repository.WeakSoundTestRepository;
-import com.potato.balbambalbam.data.repository.WeakSoundTestSatusRepositoy;
 import com.potato.balbambalbam.exception.ResponseNotFoundException;
 import com.potato.balbambalbam.myReport.test.dto.TestResponseDto;
 import com.potato.balbambalbam.myReport.test.dto.TestStartResponseDto;
 import com.potato.balbambalbam.myReport.test.dto.WeakSoundTestListDto;
 import com.potato.balbambalbam.myReport.weaksound.service.PhonemeService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,7 +30,6 @@ public class WeakSoundTestService {
     private final WeakSoundTestAiService weakSoundTestAiService;
     private final PhonemeService phonemeService;
     private final UserWeakSoundRepository userWeakSoundRepository;
-    private final WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy;
     private final Map<Long, Long> lastCardProgress = new ConcurrentHashMap<>();
 
     public TestStartResponseDto checkTestStatus(Long userId) {
@@ -102,8 +98,6 @@ public class WeakSoundTestService {
                 UserWeakSound userWeakSound = new UserWeakSound(userId, phonemeId);
                 userWeakSoundRepository.save(userWeakSound);
             });
-            WeakSoundTestStatus weakSoundTestStatus = new WeakSoundTestStatus(userId, true);
-            weakSoundTestSatusRepositoy.save(weakSoundTestStatus);
         } finally {
             phonemeService.clearTemporaryData(userId);
             lastCardProgress.remove(userId);
@@ -114,10 +108,6 @@ public class WeakSoundTestService {
         List<UserWeakSound> userWeakSounds = userWeakSoundRepository.findAllByUserId(userId);
         if (!userWeakSounds.isEmpty()) {
             userWeakSoundRepository.deleteAll(userWeakSounds);
-        }
-        WeakSoundTestStatus testStatus = weakSoundTestSatusRepositoy.findByUserId(userId);
-        if (testStatus != null) {
-            weakSoundTestSatusRepositoy.delete(testStatus);
         }
     }
 }

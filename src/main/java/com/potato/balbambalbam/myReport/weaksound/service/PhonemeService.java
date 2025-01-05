@@ -2,10 +2,8 @@ package com.potato.balbambalbam.myReport.weaksound.service;
 
 import com.potato.balbambalbam.data.entity.Phoneme;
 import com.potato.balbambalbam.data.entity.UserWeakSound;
-import com.potato.balbambalbam.data.entity.WeakSoundTestStatus;
 import com.potato.balbambalbam.data.repository.PhonemeRepository;
 import com.potato.balbambalbam.data.repository.UserWeakSoundRepository;
-import com.potato.balbambalbam.data.repository.WeakSoundTestSatusRepositoy;
 import com.potato.balbambalbam.exception.ResponseNotFoundException;
 import com.potato.balbambalbam.myReport.test.dto.TestResponseDto;
 import com.potato.balbambalbam.myReport.weaksound.dto.PhonemeResponseDto;
@@ -24,7 +22,6 @@ import java.util.stream.Collectors;
 public class PhonemeService {
     private final PhonemeRepository phonemeRepository;
     private final UserWeakSoundRepository userWeakSoundRepository;
-    private final WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy;
     private Map<Long, Map<Long, Integer>> temporaryStorage = new HashMap<>();
 
     public boolean hasTemporaryData(Long userId) {
@@ -79,11 +76,6 @@ public class PhonemeService {
         List<UserWeakSound> userWeakSounds = userWeakSoundRepository.findAllByUserId(userId);
         if (!userWeakSounds.isEmpty()) {
             userWeakSoundRepository.deleteAll(userWeakSounds);
-        }
-        // 테스트 상태 삭제
-        WeakSoundTestStatus testStatus = weakSoundTestSatusRepositoy.findByUserId(userId);
-        if (testStatus != null) {
-            weakSoundTestSatusRepositoy.delete(testStatus);
         }
     }
 
