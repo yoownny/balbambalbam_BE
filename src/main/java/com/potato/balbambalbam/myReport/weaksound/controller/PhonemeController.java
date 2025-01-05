@@ -80,7 +80,7 @@ public class PhonemeController {
         return ResponseEntity.ok("취약음소가 추가되었습니다.");
     }
 
-    @Operation(summary = "사용자의 취약음소 삭제", description = "사용자의 취약음소를 삭제한다.")
+    @Operation(summary = "사용자의 개별 취약음소 삭제", description = "사용자의 개별 취약음소를 삭제한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "사용자의 취약음소가 삭제된 경우", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "사용자의 취약음소가 삭제되었습니다."))),
             @ApiResponse(responseCode = "500", description = "서버 오류가 발생한 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
@@ -92,7 +92,7 @@ public class PhonemeController {
         return ResponseEntity.ok("사용자의 취약음소가 삭제되었습니다.");
     }
 
-    @Operation(summary = "사용자의 전체 취약음소 및 취약음소 테스트 여부 삭제", description = "사용자의 전체 취약음소와 취약음소 테스트 여부를 삭제한다.")
+    @Operation(summary = "사용자의 전체 취약음소 삭제", description = "사용자의 전체 취약음소를 삭제한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "사용자의 취약음소가 삭제된 경우", content = @Content(mediaType = "application/json", examples = @ExampleObject(value = "사용자의 전체 취약음소 데이터가 삭제되었습니다."))),
             @ApiResponse(responseCode = "500", description = "서버 오류가 발생한 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))

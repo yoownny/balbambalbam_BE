@@ -7,13 +7,14 @@ import lombok.Setter;
 @Entity(name = "user_weaksound")
 @Getter
 @Setter
+@IdClass(UserWeakSoundId.class)
 public class UserWeakSound {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    @Id
     @Column(name = "user_phoneme", nullable = false)
     private Long userPhoneme;
 
