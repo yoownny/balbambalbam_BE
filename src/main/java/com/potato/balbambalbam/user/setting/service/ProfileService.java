@@ -9,7 +9,6 @@ import com.potato.balbambalbam.data.repository.UserAttendanceRepository;
 import com.potato.balbambalbam.data.repository.UserLevelRepository;
 import com.potato.balbambalbam.data.repository.UserRepository;
 import com.potato.balbambalbam.data.repository.UserWeakSoundRepository;
-import com.potato.balbambalbam.data.repository.WeakSoundTestSatusRepositoy;
 import com.potato.balbambalbam.exception.InvalidUserNameException;
 import com.potato.balbambalbam.exception.UserNotFoundException;
 import com.potato.balbambalbam.user.setting.dto.EditResponseDto;
@@ -27,7 +26,6 @@ public class ProfileService {
     private final CardScoreRepository cardScoreRepository;
     private final CustomCardRepository customCardRepository;
     private final UserWeakSoundRepository userWeakSoundRepository;
-    private final WeakSoundTestSatusRepositoy weakSoundTestSatusRepositoy;
     private final UserLevelRepository userLevelRepository;
     private final UserAttendanceRepository userAttendanceRepository;
 
@@ -68,9 +66,6 @@ public class ProfileService {
         if (userWeakSoundRepository.existsByUserId(userId)) {
             userWeakSoundRepository.deleteByUserId(userId);
         }
-        if (weakSoundTestSatusRepositoy.existsByUserId(userId)) {
-            weakSoundTestSatusRepositoy.deleteByUserId(userId);
-        }
         if (userLevelRepository.existsByUserId(userId)) {
             userLevelRepository.deleteByUserId(userId);
         }
@@ -80,13 +75,6 @@ public class ProfileService {
 
         refreshRepository.deleteBySocialIdAndUserId(user.getSocialId() , user.getId());
         userRepository.deleteById(userId);
-    }
-
-    //회원정보 검색
-    public EditResponseDto findUserById(Long userId) {
-        User editUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); //404
-        return new EditResponseDto(editUser.getName(), editUser.getAge(), editUser.getGender());
     }
 
     public User findUserBySocialId(String socialId) {
