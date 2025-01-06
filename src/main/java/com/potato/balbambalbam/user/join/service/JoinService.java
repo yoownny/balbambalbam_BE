@@ -10,6 +10,7 @@ import com.potato.balbambalbam.user.join.dto.JoinResponseDto;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,8 @@ public class JoinService {
         data.setAge(age);
         data.setGender(gender);
         data.setRole("ROLE_USER");
+        data.setCreatedAt(LocalDateTime.now()); // 생성 시간 설정
+        data.setEnabled(true); // 활성 상태로 설정
         User savedUser = userRepository.save(data);
 
         // 사용자 레벨 데이터베이스에 저장
@@ -50,39 +53,51 @@ public class JoinService {
         userLevelRepository.save(userLevel);
 
         // access 토큰 발급
-        String access = jwtUtil.createJwt("access", savedUser.getId(), socialId, data.getRole(), 7200000L); // 7200000L 120분, 120000L 2분
+        String access = jwtUtil.createJwt("access", savedUser.getId(), socialId, data.getRole(), 7200000L); // 7200000L 120분
 
         // Refresh 토큰 발급
-        String refresh = jwtUtil.createJwt("refresh", savedUser.getId(), socialId, data.getRole(),
-                864000000L); // 86400000L 24시간, 300000L 5분
-        addRefreshEntity(savedUser.getId(), socialId, refresh, 864000000L);
+        String refresh = jwtUtil.createJwt("refresh", savedUser.getId(), socialId, data.getRole(), 8640000000L); // 8640000000L 2400시간
+        addRefreshEntity(savedUser.getId(), socialId, refresh, 8640000000L);
 
         response.setHeader("access", access);
         response.setHeader("refresh", refresh);
     }
 
     private void addRefreshEntity(Long userId, String socialId, String refresh, Long expiredMs) {
-        Date date = new Date(System.currentTimeMillis() + expiredMs);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expirationTime = now.plusSeconds(expiredMs / 1000);
 
         Refresh refreshEntity = new Refresh();
         refreshEntity.setUserId(userId);
         refreshEntity.setSocialId(socialId);
         refreshEntity.setRefresh(refresh);
-        refreshEntity.setExpiration(date.toString());
+        refreshEntity.setLastLoginAt(LocalDateTime.now());  // 마지막 로그인 시간 설정
+        refreshEntity.setExpiration(expirationTime); // LocalDateTime으로 만료시간 설정
 
         refreshRepository.save(refreshEntity);
     }
 
     //회원정보 검색
     public EditResponseDto findUserById(Long userId) {
-        User editUser = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); //404
+        User editUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); //404
+
+        // 탈퇴한 회원인 경우 예외 처리
+        if (!editUser.getEnabled()) {
+            throw new UserNotFoundException("탈퇴한 회원입니다.");
+        }
+
         return new EditResponseDto(editUser.getName(), editUser.getAge(), editUser.getGender());
     }
 
     public User findUserBySocialId(String socialId) {
-        return userRepository.findBySocialId(socialId)
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); //404
+        User user = userRepository.findBySocialId(socialId).orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+
+        // 탈퇴한 회원인 경우 예외 처리
+        if (!user.getEnabled()) {
+            throw new UserNotFoundException("탈퇴한 회원입니다.");
+        }
+
+        return user;
     }
 
 }

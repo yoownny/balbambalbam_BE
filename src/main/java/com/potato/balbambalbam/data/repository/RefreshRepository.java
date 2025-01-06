@@ -2,6 +2,8 @@ package com.potato.balbambalbam.data.repository;
 
 import com.potato.balbambalbam.data.entity.Refresh;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
