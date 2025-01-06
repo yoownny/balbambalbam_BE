@@ -23,7 +23,7 @@ public class CardListService {
     private final CardBookmarkRepository cardBookmarkRepository;
     private final CardScoreRepository cardScoreRepository;
     private final CustomCardRepository customCardRepository;
-    private final PronunciationPictureRepository pronunciationPictureRepository;
+    private final PhonemeRepository phonemeRepository;
     private final UserWeakSoundRepository userWeakSoundRepository;
 
     /**
@@ -97,9 +97,9 @@ public class CardListService {
             else {
                 phonemeId = card.getPhonemesMap().get(0);
             }
-            PhonemeExplanation phonemeExplanation = pronunciationPictureRepository.findByPhonemeId(phonemeId).orElseThrow(() -> new IllegalArgumentException("음절 설명 찾기에 실패했습니다"));
+            Phoneme phoneme = phonemeRepository.findById(phonemeId).orElseThrow(() -> new IllegalArgumentException("음절 설명 찾기에 실패했습니다"));
             responseCardDto.setPictureUrl("/images/" + phonemeId + ".png");
-            responseCardDto.setExplanation(phonemeExplanation.getExplanation());
+            responseCardDto.setExplanation(phoneme.getExplanation());
         } else {
             responseCardDto.setPictureUrl(null);
             responseCardDto.setExplanation(null);
