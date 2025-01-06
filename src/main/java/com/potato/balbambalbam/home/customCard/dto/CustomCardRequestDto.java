@@ -14,6 +14,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CustomCardRequestDto {
     @NotBlank(message = "문장을 작성해주세요")
-    @Size(min = 1, max = 35, message = "1 ~ 35자 사이로 작성해야합니다.")
+    @Size(min = 1, max = 50, message = "1 ~ 50자 사이로 작성해야합니다.")
     String text;
 }
