@@ -9,6 +9,7 @@ import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -66,28 +67,29 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // 토큰 생성
         String access = jwtUtil.createJwt("access", userId, socialId, role, 7200000L); // 7200000L 2시간
-        String refresh = jwtUtil.createJwt("refresh", userId, socialId, role, 864000000L); // 86400000L 24시간
+        String refresh = jwtUtil.createJwt("refresh", userId, socialId, role, 8640000000L); // 100일
 
         response.setHeader("access", access);
         response.setHeader("refresh", refresh);
 
         //Refresh 토큰 저장 DB에 기존의 Refresh 토큰 삭제 후 새 Refresh 토큰 저장
         refreshRepository.deleteBySocialIdAndUserId(socialId, userId);
-        addRefreshEntity(userId, socialId, refresh, 864000000L);
+        addRefreshEntity(userId, socialId, refresh, 8640000000L);
 
         response.setContentType("text/plain; charset=UTF-8");
         response.getWriter().print("로그인이 완료되었습니다.");
     }
 
     private void addRefreshEntity(Long userId, String socialId, String refresh, Long expiredMs) {
-
-        Date date = new Date(System.currentTimeMillis() + expiredMs);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expirationTime = now.plusSeconds(expiredMs / 1000);
 
         Refresh refreshEntity = new Refresh();
         refreshEntity.setUserId(userId);
         refreshEntity.setSocialId(socialId);
         refreshEntity.setRefresh(refresh);
-        refreshEntity.setExpiration(date.toString());
+        refreshEntity.setLastLoginAt(LocalDateTime.now());  // 마지막 로그인 시간 설정
+        refreshEntity.setExpiration(expirationTime); // LocalDateTime으로 만료시간 설정
 
         refreshRepository.save(refreshEntity);
     }
