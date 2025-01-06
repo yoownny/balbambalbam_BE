@@ -97,9 +97,9 @@ public class CardListService {
             else {
                 phonemeId = card.getPhonemesMap().get(0);
             }
-            PronunciationPicture pronunciationPicture = pronunciationPictureRepository.findByPhonemeId(phonemeId).orElseThrow(() -> new IllegalArgumentException("음절 설명 찾기에 실패했습니다"));
+            PhonemeExplanation phonemeExplanation = pronunciationPictureRepository.findByPhonemeId(phonemeId).orElseThrow(() -> new IllegalArgumentException("음절 설명 찾기에 실패했습니다"));
             responseCardDto.setPictureUrl("/images/" + phonemeId + ".png");
-            responseCardDto.setExplanation(pronunciationPicture.getExplanation());
+            responseCardDto.setExplanation(phonemeExplanation.getExplanation());
         } else {
             responseCardDto.setPictureUrl(null);
             responseCardDto.setExplanation(null);

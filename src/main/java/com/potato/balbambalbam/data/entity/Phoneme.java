@@ -14,7 +14,8 @@ public class Phoneme {
     private Long type;
     @Column(name = "text", nullable = false)
     private String text;
-
+    @Column(name = "explanation")
+    private String explanation;
     public Phoneme() {
     }
 }

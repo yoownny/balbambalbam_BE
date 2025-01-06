@@ -3,9 +3,12 @@ package com.potato.balbambalbam.card.cardInfo.service;
 import com.potato.balbambalbam.card.cardInfo.dto.CardInfoResponseDto;
 import com.potato.balbambalbam.data.entity.Card;
 import com.potato.balbambalbam.data.entity.CardVoice;
-import com.potato.balbambalbam.data.entity.PronunciationPicture;
+import com.potato.balbambalbam.data.entity.Phoneme;
 import com.potato.balbambalbam.data.entity.User;
-import com.potato.balbambalbam.data.repository.*;
+import com.potato.balbambalbam.data.repository.CardRepository;
+import com.potato.balbambalbam.data.repository.CardVoiceRepository;
+import com.potato.balbambalbam.data.repository.PhonemeRepository;
+import com.potato.balbambalbam.data.repository.UserRepository;
 import com.potato.balbambalbam.exception.CardNotFoundException;
 import com.potato.balbambalbam.exception.UserNotFoundException;
 import com.potato.balbambalbam.exception.VoiceNotFoundException;
@@ -21,7 +24,7 @@ public class CardInfoService {
     private final UserRepository userRepository;
     private final CardRepository cardRepository;
     private final CardVoiceRepository cardVoiceRepository;
-    private final PronunciationPictureRepository pronunciationPictureRepository;
+    private final PhonemeRepository phonemeRepository;
 
     public CardInfoResponseDto getCardInfo(Long userId, Long cardId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User가 존재하지 않습니다"));
@@ -43,15 +46,15 @@ public class CardInfoService {
                 .build();
 
         if (card.getCategoryId() == 1 || card.getCategoryId() == 3) {
-            PronunciationPicture pronunciationInfo = getPictureAndExplanation(card);
-            cardInfoResponseDto.setExplanation(pronunciationInfo.getExplanation());
-            cardInfoResponseDto.setPictureUrl("/images/" + pronunciationInfo.getPhonemeId() + ".png");
+            Phoneme phoneme = getPictureAndExplanation(card);
+            cardInfoResponseDto.setExplanation(phoneme.getExplanation());
+            cardInfoResponseDto.setPictureUrl("/images/" + phoneme.getId() + ".png");
         }
 
         return cardInfoResponseDto;
     }
 
-    protected PronunciationPicture getPictureAndExplanation(Card card) {
+    protected Phoneme getPictureAndExplanation(Card card) {
         Long phonemeId = null;
         //모음인 경우
         if (card.getCardId() <= 27) {
@@ -64,7 +67,7 @@ public class CardInfoService {
         else if(card.getCardId() >= 92 && card.getCardId() <= 135) {
             phonemeId = card.getPhonemesMap().get(2);
         }
-        return pronunciationPictureRepository.findByPhonemeId(phonemeId)
+        return phonemeRepository.findById(phonemeId)
                 .orElseThrow(() -> new IllegalArgumentException("음절 설명 찾기에 실패했습니다"));
 
     }
