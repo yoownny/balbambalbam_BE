@@ -1,6 +1,10 @@
 package com.potato.balbambalbam.data.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,14 +31,14 @@ public class User {
     @Column(name = "social_id", nullable = false, unique = true)
     private String socialId;
 
-    @Column(name = "role", nullable = false)
-    private String role;
+    @Column(name = "role_id")
+    private Long roleId;
+
+    @Column(name = "status_id")
+    private Long statusId;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "enabled", nullable = false)
-    private Boolean enabled;
 
     public User() {
         this.createdAt = LocalDateTime.now();

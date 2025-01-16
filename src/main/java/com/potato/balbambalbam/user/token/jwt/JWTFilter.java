@@ -48,12 +48,12 @@ public class JWTFilter extends OncePerRequestFilter {
 
         Long userId = jwtUtil.getUserId(accessToken);
         String socialId = jwtUtil.getSocialId(accessToken);
-        String role = jwtUtil.getRole(accessToken);
+        Long role = jwtUtil.getRoleId(accessToken);
 
         User user = new User();
         user.setId(userId);
         user.setSocialId(socialId);
-        user.setRole(role);
+        user.setRoleId(role);
         CustomUserDetails customUserDetails = new CustomUserDetails(Optional.of(user));
 
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());

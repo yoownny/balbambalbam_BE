@@ -1,15 +1,7 @@
 package com.potato.balbambalbam.user.setting.service;
 
 import com.potato.balbambalbam.data.entity.User;
-import com.potato.balbambalbam.data.repository.CardBookmarkRepository;
-import com.potato.balbambalbam.data.repository.CardScoreRepository;
-import com.potato.balbambalbam.data.repository.CustomCardRepository;
-import com.potato.balbambalbam.data.repository.RefreshRepository;
-import com.potato.balbambalbam.data.repository.UserAttendanceRepository;
-import com.potato.balbambalbam.data.repository.UserLevelRepository;
 import com.potato.balbambalbam.data.repository.UserRepository;
-import com.potato.balbambalbam.data.repository.UserWeakSoundRepository;
-import com.potato.balbambalbam.exception.InvalidUserNameException;
 import com.potato.balbambalbam.exception.UserNotFoundException;
 import com.potato.balbambalbam.user.setting.dto.EditResponseDto;
 import jakarta.transaction.Transactional;
@@ -21,13 +13,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProfileService {
     private final UserRepository userRepository;
-    private final RefreshRepository refreshRepository;
-    private final CardBookmarkRepository cardBookmarkRepository;
-    private final CardScoreRepository cardScoreRepository;
-    private final CustomCardRepository customCardRepository;
-    private final UserWeakSoundRepository userWeakSoundRepository;
-    private final UserLevelRepository userLevelRepository;
-    private final UserAttendanceRepository userAttendanceRepository;
 
     // 회원정보 업데이트
     @Transactional
@@ -50,31 +35,7 @@ public class ProfileService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
-        if (!user.getName().equals(name)) {
-            throw new InvalidUserNameException("닉네임이 일치하지 않습니다."); //400
-        }
-
-        if (cardBookmarkRepository.existsByUserId(userId)) {
-            cardBookmarkRepository.deleteByUserId(userId);
-        }
-        if (cardScoreRepository.existsByUserId(userId)) {
-            cardScoreRepository.deleteByUserId(userId);
-        }
-        if (customCardRepository.existsByUserId(userId)) {
-            customCardRepository.deleteUserById(userId);
-        }
-        if (userWeakSoundRepository.existsByUserId(userId)) {
-            userWeakSoundRepository.deleteByUserId(userId);
-        }
-        if (userLevelRepository.existsByUserId(userId)) {
-            userLevelRepository.deleteByUserId(userId);
-        }
-        if (userAttendanceRepository.existsByUserId(userId)) {
-            userAttendanceRepository.deleteByUserId(userId);
-        }
-
-        refreshRepository.deleteBySocialIdAndUserId(user.getSocialId() , user.getId());
-        userRepository.deleteById(userId);
+        user.setStatusId(3L);
     }
 
     public User findUserBySocialId(String socialId) {

@@ -63,11 +63,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
+        Long roleId = Long.parseLong(auth.getAuthority());
 
         // 토큰 생성
-        String access = jwtUtil.createJwt("access", userId, socialId, role, 7200000L); // 7200000L 2시간
-        String refresh = jwtUtil.createJwt("refresh", userId, socialId, role, 8640000000L); // 100일
+        String access = jwtUtil.createJwt("access", userId, socialId, roleId, 7200000L); // 7200000L 2시간
+        String refresh = jwtUtil.createJwt("refresh", userId, socialId, roleId, 8640000000L); // 100일
 
         response.setHeader("access", access);
         response.setHeader("refresh", refresh);

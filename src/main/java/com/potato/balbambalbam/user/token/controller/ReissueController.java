@@ -58,16 +58,17 @@ public class ReissueController {
 
         Long userId = jwtUtil.getUserId(refresh);
         String socialId = jwtUtil.getSocialId(refresh);
-        String role = jwtUtil.getRole(refresh);
+        Long roleId = jwtUtil.getRoleId(refresh);
 
         // 사용자가 enabled 상태인지 확인
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
-        if (!user.getEnabled()) {
+
+        if (user.getStatusId()==3L) {
             throw new UserNotFoundException("탈퇴한 회원입니다.");
         }
 
-        String newAccess = jwtUtil.createJwt("access", userId, socialId, role, 7200000L);
-        String newRefresh = jwtUtil.createJwt("refresh", userId, socialId, role, 8640000000L); // 100일
+        String newAccess = jwtUtil.createJwt("access", userId, socialId, roleId, 7200000L);
+        String newRefresh = jwtUtil.createJwt("refresh", userId, socialId, roleId, 8640000000L); // 100일
 
         refreshRepository.deleteBySocialIdAndUserId(socialId, userId);
         addRefreshEntity(userId, socialId, newRefresh, 8640000000L); // 100일

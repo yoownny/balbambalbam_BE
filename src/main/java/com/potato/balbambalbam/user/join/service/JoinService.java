@@ -39,9 +39,9 @@ public class JoinService {
         data.setSocialId(socialId);
         data.setAge(age);
         data.setGender(gender);
-        data.setRole("ROLE_USER");
         data.setCreatedAt(LocalDateTime.now()); // 생성 시간 설정
-        data.setEnabled(true); // 활성 상태로 설정
+        data.setRoleId(2L); // user로 설정
+        data.setStatusId(1L); // 활성 상태로 설
         User savedUser = userRepository.save(data);
 
         // 사용자 레벨 데이터베이스에 저장
@@ -53,10 +53,10 @@ public class JoinService {
         userLevelRepository.save(userLevel);
 
         // access 토큰 발급
-        String access = jwtUtil.createJwt("access", savedUser.getId(), socialId, data.getRole(), 7200000L); // 7200000L 120분
+        String access = jwtUtil.createJwt("access", savedUser.getId(), socialId, data.getRoleId(), 7200000L); // 7200000L 120분
 
         // Refresh 토큰 발급
-        String refresh = jwtUtil.createJwt("refresh", savedUser.getId(), socialId, data.getRole(), 8640000000L); // 8640000000L 2400시간
+        String refresh = jwtUtil.createJwt("refresh", savedUser.getId(), socialId, data.getRoleId(), 8640000000L); // 8640000000L 2400시간
         addRefreshEntity(savedUser.getId(), socialId, refresh, 8640000000L);
 
         response.setHeader("access", access);
@@ -81,8 +81,12 @@ public class JoinService {
     public EditResponseDto findUserById(Long userId) {
         User editUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); //404
 
+        // 비활성화된 회원인 경우 예외 처리
+        if (editUser.getStatusId()==2L) {
+            throw new UserNotFoundException("비활성화된 회원입니다.");
+        }
         // 탈퇴한 회원인 경우 예외 처리
-        if (!editUser.getEnabled()) {
+        if (editUser.getStatusId()==3L) {
             throw new UserNotFoundException("탈퇴한 회원입니다.");
         }
 
@@ -92,8 +96,12 @@ public class JoinService {
     public User findUserBySocialId(String socialId) {
         User user = userRepository.findBySocialId(socialId).orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
 
+        // 비활성화된 회원인 경우 예외 처리
+        if (user.getStatusId()==2L) {
+            throw new UserNotFoundException("비활성화된 회원입니다.");
+        }
         // 탈퇴한 회원인 경우 예외 처리
-        if (!user.getEnabled()) {
+        if (user.getStatusId()==3L) {
             throw new UserNotFoundException("탈퇴한 회원입니다.");
         }
 
