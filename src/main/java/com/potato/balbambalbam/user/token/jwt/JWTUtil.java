@@ -38,14 +38,14 @@ public class JWTUtil {
                 .get("socialId", String.class);
     }
 
-    public String getRole(String token) {
+    public Long getRoleId(String token) {
 
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
-                .get("role", String.class);
+                .get("roleId", Long.class);
     }
 
     public Boolean isExpired(String token) {
@@ -60,13 +60,13 @@ public class JWTUtil {
     }
 
     //토큰 생성하기
-    public String createJwt(String category, Long userId, String socialId, String role, Long expiredMs) {
+    public String createJwt(String category, Long userId, String socialId, Long roleId, Long expiredMs) {
 
         return Jwts.builder()
                 .claim("category", category)
                 .claim("userId", userId)
                 .claim("socialId", socialId)
-                .claim("role", role)
+                .claim("roleId", roleId)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
