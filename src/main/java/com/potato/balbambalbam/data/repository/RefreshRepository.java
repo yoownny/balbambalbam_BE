@@ -27,4 +27,9 @@ public interface RefreshRepository extends JpaRepository<Refresh, Long> {
 
     @Transactional
     void deleteByRefresh(String refresh);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE refresh r SET r.expiration = :expiration WHERE r.socialId = :socialId")
+    void updateExpiration(@Param("expiration") LocalDateTime expiration, @Param("socialId") String socialId);
 }

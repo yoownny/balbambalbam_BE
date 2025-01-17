@@ -59,6 +59,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = customUserDetails.getUserId();
         String socialId = customUserDetails.getUsername();
+        Long statusId = customUserDetails.getStatusId();
+
+        // 사용자 상태 체크
+        if (statusId == 2L) {
+            sendError(response, HttpServletResponse.SC_FORBIDDEN, "UserStatusException", "비활성화된 회원입니다.");
+            return;
+        }
+        if (statusId == 3L) {
+            sendError(response, HttpServletResponse.SC_FORBIDDEN, "UserStatusException", "탈퇴한 회원입니다.");
+            return;
+        }
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
