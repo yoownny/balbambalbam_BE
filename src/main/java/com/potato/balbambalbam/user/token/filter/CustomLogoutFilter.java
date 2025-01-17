@@ -10,6 +10,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
@@ -91,7 +92,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
             return;
         }
 
-        refreshRepository.deleteBySocialIdAndUserId(socialId, userId);
+        refreshRepository.updateExpiration(LocalDateTime.now(), socialId);
 
         response.setContentType("text/plain; charset=UTF-8");
         response.getWriter().print("로그아웃이 완료되었습니다.");

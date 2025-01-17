@@ -34,8 +34,12 @@ public class CustomUserDetails implements UserDetails {
         return user.getSocialId();
     }
 
-    public Long getUserId(){
+    public Long getUserId() {
         return user.getId();
+    }
+
+    public Long getStatusId() {
+        return user != null ? user.getStatusId() : null;
     }
 
     @Override
