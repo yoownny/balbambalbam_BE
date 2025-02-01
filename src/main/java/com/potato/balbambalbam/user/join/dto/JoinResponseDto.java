@@ -18,5 +18,6 @@ public class JoinResponseDto {
     private Integer age;
     @NotNull(message = "입력 데이터가 충분하지 않습니다.")
     private Byte gender;
+    private Long level;
 
 }

@@ -30,12 +30,6 @@ public class JoinController {
     private final JoinService joinService;
     private final JWTUtil jwtUtil;
 
-    private Long extractUserIdFromToken(String access) {
-        String socialId = jwtUtil.getSocialId(access);
-        return joinService.findUserBySocialId(socialId).getId();
-    }
-
-
     @Operation(summary = "회원가입", description = "새로운 사용자를 생성한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원가입이 성공적으로 완료된 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class), examples = @ExampleObject(value = "회원가입이 완료되었습니다."))),
@@ -62,7 +56,7 @@ public class JoinController {
     @GetMapping("/users")
     public ResponseEntity<?> getUserById(@RequestHeader("access") String access) {
 
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         EditResponseDto editUser = joinService.findUserById(userId);
 
         return ResponseEntity.ok().body(editUser); //200
