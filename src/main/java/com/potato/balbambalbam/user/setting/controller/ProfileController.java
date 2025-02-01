@@ -34,11 +34,6 @@ public class ProfileController {
     private final RefreshRepository refreshRepository;
     private final JWTUtil jwtUtil;
 
-    private Long extractUserIdFromToken(String access) {
-        String socialId = jwtUtil.getSocialId(access);
-        return profileService.findUserBySocialId(socialId).getId();
-    }
-
     private String extractSocialIdFromToken(String access) {
         String socialId = jwtUtil.getSocialId(access);
         return socialId;
@@ -56,7 +51,7 @@ public class ProfileController {
     public ResponseEntity<?> updateUser(@Validated @RequestHeader("access") String access,
                                         @RequestBody EditResponseDto editResponseDto) {
 
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         EditResponseDto editUser = profileService.updateUser(userId, editResponseDto);
 
         return ResponseEntity.ok().body(editUser); //200
@@ -74,7 +69,7 @@ public class ProfileController {
     public ResponseEntity<?> deleteUser(@RequestHeader("access") String access,
                                         @RequestBody DeleteUserResponseDto deleteUserDto) {
 
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         String name = deleteUserDto.getName();
         profileService.deleteUser(userId, name);
 

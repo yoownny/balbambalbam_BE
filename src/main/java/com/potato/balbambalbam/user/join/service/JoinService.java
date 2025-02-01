@@ -8,6 +8,7 @@ import com.potato.balbambalbam.exception.UserNotFoundException;
 import com.potato.balbambalbam.user.setting.dto.EditResponseDto;
 import com.potato.balbambalbam.user.join.dto.JoinResponseDto;
 import com.potato.balbambalbam.user.token.jwt.JWTUtil;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ public class JoinService {
         String socialId = joinDto.getSocialId();
         Integer age = joinDto.getAge();
         Byte gender = joinDto.getGender();
+        Long level = (joinDto.getLevel() == null) ? 1L : joinDto.getLevel();
 
         // 사용자 데이터베이스에 회원정보 저장
         User data = new User();
@@ -41,7 +43,7 @@ public class JoinService {
         data.setGender(gender);
         data.setCreatedAt(LocalDateTime.now()); // 생성 시간 설정
         data.setRoleId(2L); // user로 설정
-        data.setStatusId(1L); // 활성 상태로 설
+        data.setStatusId(1L); // 활성 상태로 설정
         User savedUser = userRepository.save(data);
 
         // 사용자 레벨 데이터베이스에 저장
@@ -49,7 +51,7 @@ public class JoinService {
         userLevel.setUserId(savedUser.getId());
         userLevel.setUserExperience(0L);
         userLevel.setLevelId(1L);
-        userLevel.setCategoryId(1L);
+        userLevel.setCategoryId(level); // 사용자 카테고리 레벨 설정
         userLevelRepository.save(userLevel);
 
         // access 토큰 발급
@@ -79,7 +81,14 @@ public class JoinService {
 
     //회원정보 검색
     public EditResponseDto findUserById(Long userId) {
-        User editUser = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); //404
+        // Fetch user
+        User editUser = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); //404
+
+        // Fetch user level by userId
+        UserLevel editUserLevel = userLevelRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자 레벨 정보를 찾을 수 없습니다."));
+
 
         // 비활성화된 회원인 경우 예외 처리
         if (editUser.getStatusId()==2L) {
@@ -90,7 +99,7 @@ public class JoinService {
             throw new UserNotFoundException("탈퇴한 회원입니다.");
         }
 
-        return new EditResponseDto(editUser.getName(), editUser.getAge(), editUser.getGender());
+        return new EditResponseDto(editUser.getName(), editUser.getAge(), editUser.getGender(), editUserLevel.getCategoryId());
     }
 
     public User findUserBySocialId(String socialId) {
