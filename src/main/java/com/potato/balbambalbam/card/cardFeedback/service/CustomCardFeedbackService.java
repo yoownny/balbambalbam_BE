@@ -33,6 +33,13 @@ public class CustomCardFeedbackService {
         AiFeedbackResponseDto aiFeedbackResponseDto = getAiFeedbackResponseDto(userFeedbackRequestDto, cardId, userId);
 
         //점수 업데이트
+        if(customCardRepository.existsById(cardId)) {
+            CustomCard customCard = customCardRepository.findById(cardId).get();
+            if(customCard.getText().length() == 1) {
+                aiFeedbackResponseDto.setUserAccuracy(100);
+                aiFeedbackResponseDto.setUserText(customCard.getText());
+            }
+        }
         int score = aiFeedbackResponseDto.getUserAccuracy();
         updateScoreIfLarger(cardId, score);
 

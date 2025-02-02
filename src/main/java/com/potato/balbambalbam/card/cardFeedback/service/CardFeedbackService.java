@@ -40,18 +40,27 @@ public class CardFeedbackService {
         //인공지능서버와 통신
         AiFeedbackResponseDto aiFeedbackResponseDto = getAiFeedbackResponseDto(userFeedbackRequestDto, cardId);
 
-        //점수 업데이트
-        if(categoryId == 1L || categoryId == 3L) {
+        if(isOneWord(cardId)) {
             updateScoreIfLarger(userId, cardId, 100);
             aiFeedbackResponseDto.setUserAccuracy(100);
-        } else{
+        } else {
             updateScoreIfLarger(userId, cardId, aiFeedbackResponseDto.getUserAccuracy());
+
         }
 
         //학습카드 추천
         Map<String, CardInfoResponseDto> recommendCard = createRecommendCard(userId, aiFeedbackResponseDto, categoryId);
 
         return setUserFeedbackResponseDto(cardId, aiFeedbackResponseDto, recommendCard);
+    }
+
+    private boolean isOneWord(Long cardId) {
+        Card card = cardRepository.findById(cardId).get();
+        if(card.getText().length() == 1) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

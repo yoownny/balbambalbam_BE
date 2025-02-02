@@ -29,7 +29,7 @@ public class CardInsertService {
     private final TodayCardRepository todayCardRepository;
 
     public int updateCardRecordList() {
-        List<Card> cardList = cardRepository.findAll();
+        List<Card> cardList = cardRepository.findAllByCategoryId(3L);
 
         cardList.forEach(card -> {
             if (isNeedUpdate(card)) {
@@ -67,15 +67,15 @@ public class CardInsertService {
     @Transactional
     protected void updateCardRecord(Card card) {
         updatePhonemeService.updateCardPhonemeColumn(card);
-        updateEngPronunciationService.updateEngPronunciation(card);
-        updateEngTranslationService.updateEngTranslation(card);
-        updateAllTtsService.updateCardVoice(card);
+//        updateEngPronunciationService.updateEngPronunciation(card);
+//        updateEngTranslationService.updateEngTranslation(card);
+//        updateAllTtsService.updateCardVoice(card);
     }
 
     protected boolean isNeedUpdate(Card card) {
-        if (card.getCardPronunciation() ==  null || card.getCardTranslation() == null || card.getCardPronunciation() == null || cardVoiceRepository.existsById(card.getCardId())) {
-            return true;
-        }
-        return false;
+//        if (card.getCardPronunciation() ==  null || card.getCardTranslation() == null || card.getCardPronunciation() == null || cardVoiceRepository.existsById(card.getCardId())) {
+//            return true;
+//        }
+        return true;
     }
 }
