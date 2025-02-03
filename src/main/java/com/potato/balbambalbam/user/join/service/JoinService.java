@@ -102,8 +102,8 @@ public class JoinService {
     }
 
     @Transactional
-    public String recoverDeletedUser(Long userId, HttpServletResponse response) {
-        User user = userRepository.findById(userId)
+    public String recoverDeletedUser(String  socialId, HttpServletResponse response) {
+        User user = userRepository.findBySocialId(socialId)
                 .orElseThrow(() -> new UserNotFoundException("해당 사용자를 찾을 수 없습니다."));
 
         if (user.getStatusId() != 3L) {

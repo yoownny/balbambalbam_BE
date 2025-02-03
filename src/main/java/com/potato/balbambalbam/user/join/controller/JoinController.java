@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @RequiredArgsConstructor
@@ -60,19 +61,21 @@ public class JoinController {
     //회원정보 출력
     @GetMapping("/users")
     public ResponseEntity<?> getUserById(@RequestHeader("access") String access) {
-        try {
-            Long userId = jwtUtil.getUserId(access);
-            EditResponseDto userInfo = joinService.findUserById(userId);
-            return ResponseEntity.ok(userInfo);  // 정상 회원일 경우 회원정보 반환
-        } catch (IllegalStateException e) {
-            // 탈퇴한 회원인 경우 복구 여부를 묻는 메시지 반환
-            return ResponseEntity.status(409).body(e.getMessage());  // 409 Conflict
-        }
+        Long userId = jwtUtil.getUserId(access);
+        EditResponseDto userInfo = joinService.findUserById(userId);
+        return ResponseEntity.ok(userInfo);
     }
 
-    @PostMapping("/users/recover/{userId}")
-    public ResponseEntity<?> recoverUser(@PathVariable Long userId, HttpServletResponse response) {
-        String message = joinService.recoverDeletedUser(userId, response);
+    @Operation(summary = "탈퇴 계정 복구", description = "탈퇴된 회원의 계정을 복구한다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "계정이 성공적으로 복구된 경우", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없는 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "400", description = "탈퇴 상태가 아닌 사용자에 대한 복구 시도", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "500", description = "서버 오류로 인해 복구에 실패한 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    @PostMapping("/users/recover")
+    public ResponseEntity<?> recoverUser(@RequestParam("socialId") String socialId, HttpServletResponse response) {
+        String message = joinService.recoverDeletedUser(socialId, response);
         return ResponseEntity.ok(message);  // 복구 성공 시 성공 메시지 반환
 
     }
