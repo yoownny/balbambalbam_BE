@@ -42,7 +42,7 @@ public class CardInfoController {
             }
     )
     public ResponseEntity<CardInfoResponseDto> getCardInfo(@PathVariable("cardId") Long cardId, @RequestHeader("access") String access) {
-        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+        Long userId = jwtUtil.getUserId(access);
         CardInfoResponseDto cardInfoResponseDto = cardInfoService.getCardInfo(userId, cardId);
         return ResponseEntity.ok().body(cardInfoResponseDto);
     }
@@ -56,7 +56,7 @@ public class CardInfoController {
             }
     )
     public ResponseEntity<CardInfoResponseDto> postCustomCardInfo(@PathVariable("cardId") Long cardId, @RequestHeader("access") String access) {
-        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+        Long userId = jwtUtil.getUserId(access);
         CardInfoResponseDto cardInfoResponseDto = customCardInfoService.getCustomCardInfo(userId, cardId);
 
         return ResponseEntity.ok().body(cardInfoResponseDto);
@@ -71,7 +71,7 @@ public class CardInfoController {
             }
     )
     public ResponseEntity<TodayCardInfoResponseDto> postTodayCardInfo(@PathVariable("cardId") Long cardId, @RequestHeader("access") String access) {
-        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+        Long userId = jwtUtil.getUserId(access);
         TodayCardInfoResponseDto cardInfoResponseDto = todayCardInfoService.getTodayCardInfo(userId, cardId);
 
         return ResponseEntity.ok().body(cardInfoResponseDto);

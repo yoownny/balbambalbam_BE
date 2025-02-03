@@ -37,18 +37,13 @@ public class WeakSoundTestController {
     private final JWTUtil jwtUtil;
     private final WeakSoundTestService weakSoundTestService;
 
-    private Long extractUserIdFromToken(String access) {
-        String socialId = jwtUtil.getSocialId(access);
-        return joinService.findUserBySocialId(socialId).getId();
-    }
-
     @Operation(summary = "취약음소 테스트 존재 여부 확인", description = "이전에 진행중이던 테스트가 있는지 확인한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "확인 완료", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TestStartResponseDto.class)))
     })
     @GetMapping("/test/check")
     public ResponseEntity<TestStartResponseDto> checkTest(@RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         TestStartResponseDto response = weakSoundTestService.checkTestStatus(userId);
         return ResponseEntity.ok(response);
     }
@@ -59,7 +54,7 @@ public class WeakSoundTestController {
     })
     @PostMapping("/test/new")
     public ResponseEntity<List<WeakSoundTestListDto>> startNewTest(@RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         weakSoundTestService.startNewTest(userId);
         return ResponseEntity.ok(weakSoundTestService.getAllTests());
     }
@@ -71,7 +66,7 @@ public class WeakSoundTestController {
     })
     @GetMapping("/test/continue")
     public ResponseEntity<List<WeakSoundTestListDto>> continueTest(@RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         List<WeakSoundTestListDto> remainingTests = weakSoundTestService.getContinueTests(userId);
         return ResponseEntity.ok(remainingTests);
     }
@@ -85,7 +80,7 @@ public class WeakSoundTestController {
     })
     @PostMapping(value = "/test/{cardId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadFile(@PathVariable("cardId") Long id, @RequestHeader("access") String access, @RequestParam("userAudio") MultipartFile userAudio) throws IOException {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
 
         if (userAudio.isEmpty()) {
             throw new ParameterNotFoundException("사용자 음성 파일이 비었습니다.");
@@ -106,7 +101,7 @@ public class WeakSoundTestController {
     })
     @PostMapping("/test/finalize")
     public ResponseEntity<Map<Long, Integer>> finalizeAnalysis(@RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         Map<Long, Integer> topPhonemes = weakSoundTestService.getTopPhonemes(userId);
         weakSoundTestService.finalizeTestStatus(userId);
         return ResponseEntity.ok(topPhonemes);

@@ -38,7 +38,7 @@ public class CustomCardListController {
             @ApiResponse(responseCode = "400", description = "ERROR : 존재하지 않는 카테고리 조회", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     public ResponseEntity<CardListResponseDto<List<CustomCardDto>>> getCustomCardList(@RequestHeader("access") String access) {
-        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+        Long userId = jwtUtil.getUserId(access);
 
         List<CustomCardDto> cardDtoList = cardListService.getCustomCards(userId);
         CardListResponseDto<List<CustomCardDto>> response = new CardListResponseDto<>(cardDtoList, cardDtoList.size());

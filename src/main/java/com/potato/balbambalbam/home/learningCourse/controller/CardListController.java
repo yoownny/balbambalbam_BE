@@ -37,7 +37,7 @@ public class CardListController {
     })
     public ResponseEntity<CardListResponseDto<List<ResponseCardDto>>> getCardList(@RequestParam("level") Long level,
                                                                                   @RequestHeader("access") String access){
-        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+        Long userId = jwtUtil.getUserId(access);
 
         List<ResponseCardDto> cardDtoList = cardListService.getCardsByCategory(level, userId);
         CardListResponseDto<List<ResponseCardDto>> response = new CardListResponseDto<>(cardDtoList, cardDtoList.size());
@@ -53,7 +53,7 @@ public class CardListController {
             @ApiResponse(responseCode = "400", description = "ERROR : 조회 실패", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     public ResponseEntity<CourseResponseDto> getCourseList(@RequestHeader("access") String access){
-        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+        Long userId = jwtUtil.getUserId(access);
 
         CourseResponseDto response = cardListService.getCourseList(userId);
 
@@ -68,7 +68,7 @@ public class CardListController {
             @ApiResponse(responseCode = "400", description = "ERROR : 존재하지 않는 카드", content = @Content(schema = @Schema(implementation = ExceptionDto.class)))
     })
     public ResponseEntity updateCardBookmark(@PathVariable("cardId") Integer cardId, @RequestHeader("access") String access){
-        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+        Long userId = jwtUtil.getUserId(access);
 
         String message = cardListService.toggleCardBookmark(Long.valueOf(cardId), userId);
         return ResponseEntity.ok().body(message);

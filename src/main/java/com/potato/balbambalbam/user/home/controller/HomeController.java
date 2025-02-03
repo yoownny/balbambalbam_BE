@@ -28,10 +28,6 @@ public class HomeController {
     private final HomeInfoService homeInfoService;
     private final NotificationService notificationService;
 
-    private Long extractUserIdFromToken(String access) { // access 토큰으로부터 userId 추출하는 함수
-        String socialId = jwtUtil.getSocialId(access);
-        return joinService.findUserBySocialId(socialId).getId();
-    }
 
     @Operation(summary = "홈 화면 정보 조회", description = "사용자의 홈 화면에 필요한 모든 정보를 반환한다.")
     @ApiResponses(value = {
@@ -40,7 +36,7 @@ public class HomeController {
     })
     @GetMapping("/home")
     public ResponseEntity<HomeInfoDto> getHomeInfo(@RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         HomeInfoDto response = homeInfoService.getHomeInfo(userId);
         return ResponseEntity.ok(response);
     }

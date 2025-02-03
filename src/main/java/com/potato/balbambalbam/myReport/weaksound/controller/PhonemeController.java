@@ -36,10 +36,6 @@ public class PhonemeController {
     private final PhonemeService phonemeService;
     private final PhonemeRepository phonemeRepository;
 
-    private Long extractUserIdFromToken(String access) {
-        String socialId = jwtUtil.getSocialId(access);
-        return joinService.findUserBySocialId(socialId).getId();
-    }
 
     @Operation(summary = "사용자의 취약음소 제공", description = "사용자의 취약음소 4개를 제공한다.")
     @ApiResponses(value = {
@@ -49,7 +45,7 @@ public class PhonemeController {
     })
     @GetMapping("/test/phonemes")
     public ResponseEntity<List<UserWeakSoundResponseDto>> getWeakPhonemesByUserId(@RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         List<UserWeakSoundResponseDto> weakPhonemes = phonemeService.getWeakPhonemes(userId);
         if (weakPhonemes.isEmpty()) {
             throw new ResponseNotFoundException("취약음소가 없습니다.");
@@ -64,7 +60,7 @@ public class PhonemeController {
     })
     @GetMapping("/test/all")
     public ResponseEntity<List<PhonemeResponseDto>> getAllPhonemesWithWeakStatus(@RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         return ResponseEntity.ok(phonemeService.getAllPhonemes(userId));
     }
 
@@ -75,7 +71,7 @@ public class PhonemeController {
     })
     @PostMapping("/test/add")
     public ResponseEntity<?> addWeakPhonemes(@RequestHeader("access") String access, @RequestBody List<Long> phonemeIds) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         phonemeService.addWeakPhonemes(userId, phonemeIds);
         return ResponseEntity.ok("취약음소가 추가되었습니다.");
     }
@@ -87,7 +83,7 @@ public class PhonemeController {
     })
     @DeleteMapping("test/phonemes/{phonemeId}")
     public ResponseEntity<?> deleteWeakPhoneme(@RequestHeader("access") String access, @PathVariable Long phonemeId) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         phonemeService.deleteWeakPhoneme(userId, phonemeId);
         return ResponseEntity.ok("사용자의 취약음소가 삭제되었습니다.");
     }
