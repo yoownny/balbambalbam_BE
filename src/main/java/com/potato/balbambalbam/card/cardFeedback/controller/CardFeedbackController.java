@@ -46,7 +46,7 @@ public class CardFeedbackController {
                                                    @RequestHeader("access") String access,
                                                    @Validated @RequestBody UserFeedbackRequestDto userFeedbackRequestDto) {
 
-        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+        Long userId = jwtUtil.getUserId(access);
 
         UserFeedbackResponseDto userFeedbackResponseDto = cardFeedbackService.postUserFeedback(userFeedbackRequestDto, userId, cardId);
         userLevelService.updateUserLevelInfo(cardId, userId, userFeedbackResponseDto.getUserScore());
@@ -66,7 +66,7 @@ public class CardFeedbackController {
     public ResponseEntity<Object> postCustomUserFeedback(@PathVariable("cardId") Long cardId,
                                                    @Validated @RequestBody UserFeedbackRequestDto userFeedbackRequestDto,
                                                          @RequestHeader("access") String access)  {
-        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+        Long userId = jwtUtil.getUserId(access);
 
         UserFeedbackResponseDto userFeedbackResponseDto = customCardFeedbackService.postUserFeedback(userFeedbackRequestDto, cardId, userId);
         userLevelService.updateCustomCardUserLevelInfo(cardId, userId, userFeedbackResponseDto.getUserScore());
@@ -86,7 +86,7 @@ public class CardFeedbackController {
     public ResponseEntity<Object> postTodayCardUserFeedback(@PathVariable("cardId") Long cardId,
                                                          @Validated @RequestBody UserFeedbackRequestDto userFeedbackRequestDto,
                                                          @RequestHeader("access") String access)  {
-        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+        Long userId = jwtUtil.getUserId(access);
 
         UserFeedbackResponseDto userFeedbackResponseDto = todayCardFeedbackService.postUserFeedback(userFeedbackRequestDto, cardId, userId);
         userLevelService.updateCustomCardUserLevelInfo(cardId, userId, userFeedbackResponseDto.getUserScore());

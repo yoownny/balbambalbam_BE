@@ -85,36 +85,43 @@ public class JoinService {
         User editUser = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다.")); //404
 
-        // Fetch user level by userId
-        UserLevel editUserLevel = userLevelRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자 레벨 정보를 찾을 수 없습니다."));
-
-
         // 비활성화된 회원인 경우 예외 처리
         if (editUser.getStatusId()==2L) {
             throw new UserNotFoundException("비활성화된 회원입니다.");
         }
         // 탈퇴한 회원인 경우 예외 처리
         if (editUser.getStatusId()==3L) {
-            throw new UserNotFoundException("탈퇴한 회원입니다.");
+            throw new IllegalStateException("탈퇴한 회원입니다.");
         }
+
+        // Fetch user level by userId
+        UserLevel editUserLevel = userLevelRepository.findByUserId(userId)
+                .orElseThrow(() -> new UserNotFoundException("사용자 레벨 정보를 찾을 수 없습니다."));
 
         return new EditResponseDto(editUser.getName(), editUser.getAge(), editUser.getGender(), editUserLevel.getCategoryId());
     }
 
-    public User findUserBySocialId(String socialId) {
-        User user = userRepository.findBySocialId(socialId).orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다."));
+    @Transactional
+    public String recoverDeletedUser(Long userId, HttpServletResponse response) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("해당 사용자를 찾을 수 없습니다."));
 
-        // 비활성화된 회원인 경우 예외 처리
-        if (user.getStatusId()==2L) {
-            throw new UserNotFoundException("비활성화된 회원입니다.");
-        }
-        // 탈퇴한 회원인 경우 예외 처리
-        if (user.getStatusId()==3L) {
-            throw new UserNotFoundException("탈퇴한 회원입니다.");
+        if (user.getStatusId() != 3L) {
+            throw new IllegalStateException("해당 사용자는 탈퇴 상태가 아닙니다.");  // 예외 처리: 탈퇴 상태가 아니면 복구 불가
         }
 
-        return user;
+        // 계정 복구: 상태를 ACTIVE(1)로 변경
+        user.setStatusId(1L);  // ACTIVE 상태로 변경
+        userRepository.save(user);
+
+        // 복구 시 새 토큰 발급
+        String access = jwtUtil.createJwt("access", user.getId(), user.getSocialId(), user.getRoleId(), 7200000L);
+        String refresh = jwtUtil.createJwt("refresh", user.getId(), user.getSocialId(), user.getRoleId(), 8640000000L);
+
+        // 토큰을 응답 헤더에 추가
+        response.setHeader("access", access);
+        response.setHeader("refresh", refresh);
+
+        return "계정이 성공적으로 복구되었습니다.";
     }
-
 }

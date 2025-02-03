@@ -37,7 +37,7 @@ public class TodayCourseController {
     })
     public ResponseEntity<TodayCourseResponseDto> getCardList(@RequestBody TodayCourseRequestDto requestDto,
                                                               @RequestHeader("access") String access) {
-        Long userId = joinService.findUserBySocialId(jwtUtil.getSocialId(access)).getId();
+        Long userId = jwtUtil.getUserId(access);
 
         TodayCourseResponseDto response = todayCourseService.getCardList(userId, requestDto);
 

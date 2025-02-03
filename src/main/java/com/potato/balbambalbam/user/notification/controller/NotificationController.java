@@ -28,11 +28,6 @@ public class NotificationController {
     private final JWTUtil jwtUtil;
     private final NotificationService notificationService;
 
-    private Long extractUserIdFromToken(String access) { // access 토큰으로부터 userId 추출하는 함수
-        String socialId = jwtUtil.getSocialId(access);
-        return joinService.findUserBySocialId(socialId).getId();
-    }
-
     @Operation(summary = "알림 목록 조회", description = "알림을 반환한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "알림 반환 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = NotificationDto.class))),
@@ -40,7 +35,7 @@ public class NotificationController {
     })
     @GetMapping("/notification")
     public ResponseEntity<List<NotificationDto>> getNotification(@RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         List<NotificationDto> notifications = notificationService.getActiveNotifications(userId);
         return ResponseEntity.ok(notifications);
     }
@@ -52,7 +47,7 @@ public class NotificationController {
     })
     @PostMapping("/notification/{notificationId}")
     public ResponseEntity<Void> readNotification(@PathVariable Long notificationId, @RequestHeader("access") String access) {
-        Long userId = extractUserIdFromToken(access);
+        Long userId = jwtUtil.getUserId(access);
         notificationService.markAsRead(notificationId, userId);
         return ResponseEntity.ok().build();
     }

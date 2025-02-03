@@ -1,10 +1,10 @@
 package com.potato.balbambalbam.user.join.controller;
 
 import com.potato.balbambalbam.exception.dto.ExceptionDto;
-import com.potato.balbambalbam.user.setting.dto.EditResponseDto;
 import com.potato.balbambalbam.user.join.dto.JoinResponseDto;
-import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import com.potato.balbambalbam.user.join.service.JoinService;
+import com.potato.balbambalbam.user.setting.dto.EditResponseDto;
+import com.potato.balbambalbam.user.token.jwt.JWTUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -18,7 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @RequiredArgsConstructor
 @Controller
@@ -55,11 +60,20 @@ public class JoinController {
     //회원정보 출력
     @GetMapping("/users")
     public ResponseEntity<?> getUserById(@RequestHeader("access") String access) {
-
-        Long userId = jwtUtil.getUserId(access);
-        EditResponseDto editUser = joinService.findUserById(userId);
-
-        return ResponseEntity.ok().body(editUser); //200
+        try {
+            Long userId = jwtUtil.getUserId(access);
+            EditResponseDto userInfo = joinService.findUserById(userId);
+            return ResponseEntity.ok(userInfo);  // 정상 회원일 경우 회원정보 반환
+        } catch (IllegalStateException e) {
+            // 탈퇴한 회원인 경우 복구 여부를 묻는 메시지 반환
+            return ResponseEntity.status(409).body(e.getMessage());  // 409 Conflict
+        }
     }
 
+    @PostMapping("/users/recover/{userId}")
+    public ResponseEntity<?> recoverUser(@PathVariable Long userId, HttpServletResponse response) {
+        String message = joinService.recoverDeletedUser(userId, response);
+        return ResponseEntity.ok(message);  // 복구 성공 시 성공 메시지 반환
+
+    }
 }
