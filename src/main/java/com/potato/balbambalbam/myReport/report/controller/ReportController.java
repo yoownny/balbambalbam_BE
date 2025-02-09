@@ -40,9 +40,9 @@ public class ReportController {
 
     @Operation(summary = "사용자 카드 레벨 설정", description = "사용자가 선택한 카드 레벨을 설정한다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "카드 레벨 설정 성공", content = @Content),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = @Content),
-            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content)
+            @ApiResponse(responseCode = "200", description = "카드 레벨 설정 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CardLevelRequestDto.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class))),
+            @ApiResponse(responseCode = "500", description = "서버 오류 발생", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
     })
     @PostMapping("/report/cardLevel")
     public ResponseEntity<String> setCardLevel(@RequestHeader("access") String access, @RequestBody CardLevelRequestDto requestDto) {

@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -80,4 +81,17 @@ public class JoinController {
         return ResponseEntity.ok(message);  // 복구 성공 시 성공 메시지 반환
 
     }
+
+    @DeleteMapping("/users/delete")
+    @Operation(summary = "탈퇴 계정 삭제", description = "사용자의 민감 정보를 초기화하고 나머지 데이터는 남겨둔다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "사용자 민감 정보 초기화 성공", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
+    })
+    // 회원정보 영구 삭제
+    public ResponseEntity<String> anonymizeUser(@RequestParam("socialId") String socialId) {
+        joinService.anonymizeUserData(socialId);
+        return ResponseEntity.ok("사용자의 데이터가 초기화되었습니다.");
+    }
+
 }

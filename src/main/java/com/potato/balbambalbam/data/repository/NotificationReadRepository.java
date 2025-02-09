@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface NotificationReadRepository extends JpaRepository<NotificationRead, Long> {
     List<NotificationRead> findByUserId(Long userId);
     boolean existsByNotificationIdAndUserId(Long notificationId, Long userId);
+
+    void deleteByUserId(Long userId);
 }

@@ -34,11 +34,6 @@ public class ProfileController {
     private final RefreshRepository refreshRepository;
     private final JWTUtil jwtUtil;
 
-    private String extractSocialIdFromToken(String access) {
-        String socialId = jwtUtil.getSocialId(access);
-        return socialId;
-    }
-
     @Operation(summary = "회원정보 수정", description = "기존 사용자의 정보를 수정한다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원정보가 성공적으로 수정된 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = EditResponseDto.class))),
@@ -72,14 +67,6 @@ public class ProfileController {
         Long userId = jwtUtil.getUserId(access);
         String name = deleteUserDto.getName();
         profileService.deleteUser(userId, name);
-
-        // refresh
-        String socialID = extractSocialIdFromToken(access);
-        String refresh = refreshRepository.findRefreshBySocialId(socialID);
-
-        if (refresh != null && refreshRepository.existsByRefresh(refresh)) {
-            refreshRepository.deleteByUserId(userId);
-        }
 
         return ResponseEntity.ok().body("회원 탈퇴가 완료되었습니다."); //200
     }

@@ -25,6 +25,12 @@ public class JoinService {
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     private final UserLevelRepository userLevelRepository;
+    private final CardBookmarkRepository cardBookmarkRepository;
+    private final CardScoreRepository cardScoreRepository;
+    private final CustomCardRepository customCardRepository;
+    private final NotificationReadRepository notificationReadRepository;
+    private final UserAttendanceRepository userAttendanceRepository;
+    private final UserWeakSoundRepository userWeakSoundRepository;
 
     //새로운 회원정보 저장
     @Transactional
@@ -120,4 +126,31 @@ public class JoinService {
 
         return "계정이 성공적으로 복구되었습니다.";
     }
+    @Transactional
+    public void anonymizeUserData(String socialId) {
+        // 1. 사용자 조회
+        User user = userRepository.findBySocialId(socialId)
+                .orElseThrow(() -> new UserNotFoundException("해당 사용자를 찾을 수 없습니다."));
+
+        Long userId = user.getId();
+
+        // 2. 모든 연관된 데이터 삭제
+        cardBookmarkRepository.deleteByUserId(userId);
+        cardScoreRepository.deleteByUserId(userId);
+        customCardRepository.deleteByUserId(userId);
+        notificationReadRepository.deleteByUserId(userId);
+        refreshRepository.deleteByUserId(userId);
+        userAttendanceRepository.deleteByUserId(userId);
+        userLevelRepository.deleteByUserId(userId);
+        userWeakSoundRepository.deleteByUserId(userId);
+
+        // 3. 사용자 민감 정보 초기화 (익명화)
+        user.setSocialId("Deleted");
+        user.setName("Anonymous");
+        user.setStatusId(4L);  // 익명화된 사용자 상태로 설정
+        userRepository.save(user);
+    }
+
+
+
 }
