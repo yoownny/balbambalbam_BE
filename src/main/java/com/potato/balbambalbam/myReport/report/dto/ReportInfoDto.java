@@ -50,6 +50,6 @@ public class ReportInfoDto {
     @Schema(description = "취약 음소 목록")
     private List<UserWeakSoundResponseDto> weakPhonemes;
 
-    @Schema(description = "오늘의 학습 카드 레벨")
-    private Long cardLevel;
+    @Schema(description = "오늘의 학습 카드 레벨 (Beginner, Intermediate, Advanced)")
+    private String cardLevel;
 }

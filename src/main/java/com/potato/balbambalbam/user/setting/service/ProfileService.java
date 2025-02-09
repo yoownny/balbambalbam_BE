@@ -1,8 +1,6 @@
 package com.potato.balbambalbam.user.setting.service;
 
 import com.potato.balbambalbam.data.entity.User;
-import com.potato.balbambalbam.data.entity.UserLevel;
-import com.potato.balbambalbam.data.repository.UserLevelRepository;
 import com.potato.balbambalbam.data.repository.UserRepository;
 import com.potato.balbambalbam.exception.UserNotFoundException;
 import com.potato.balbambalbam.user.setting.dto.EditResponseDto;

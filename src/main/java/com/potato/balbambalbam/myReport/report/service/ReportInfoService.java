@@ -1,13 +1,14 @@
 package com.potato.balbambalbam.myReport.report.service;
 
 import com.potato.balbambalbam.data.entity.CardScore;
+import com.potato.balbambalbam.data.entity.Card;
 import com.potato.balbambalbam.data.entity.User;
 import com.potato.balbambalbam.data.entity.UserLevel;
+import com.potato.balbambalbam.data.repository.CardRepository;
 import com.potato.balbambalbam.data.repository.CardScoreRepository;
 import com.potato.balbambalbam.data.repository.UserAttendanceRepository;
 import com.potato.balbambalbam.data.repository.UserLevelRepository;
 import com.potato.balbambalbam.data.repository.UserRepository;
-import com.potato.balbambalbam.exception.UserNotFoundException;
 import com.potato.balbambalbam.myReport.report.dto.ReportInfoDto;
 import com.potato.balbambalbam.myReport.weaksound.service.PhonemeService;
 import java.time.DayOfWeek;
@@ -17,6 +18,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class ReportInfoService {
     private final CardScoreRepository cardScoreRepository;
     private final PhonemeService phonemeService;
     private final UserLevelRepository userLevelRepository;
+    private final CardRepository cardRepository;
 
     @Transactional(readOnly = true)
     public ReportInfoDto getMyReportInfo(Long userId) {
@@ -100,8 +103,73 @@ public class ReportInfoService {
         // 7. 사용자 레벨 조회
         UserLevel userLevel = userLevelRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("User level not found"));
-        reportInfoDto.setCardLevel(userLevel.getCategoryId());
+        Long categoryId = userLevel.getCategoryId();
+        reportInfoDto.setCardLevel(getLevelNameByCategoryId(categoryId));
 
         return reportInfoDto;
     }
+
+    private String getLevelNameByCategoryId(Long categoryId) {
+        if (categoryId >= 1 && categoryId <= 4) {
+            return "Beginner";
+        } else if (categoryId >= 5 && categoryId <= 15) {
+            return "Intermediate";
+        } else {
+            return "Advanced";
+        }
+    }
+
+    @Transactional
+    public void setCardLevel(Long userId, String level) {
+        // 1. 사용자 레벨 조회
+        UserLevel userLevel = userLevelRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 2. 선택한 레벨에 따라 초기 카테고리 ID 설정
+        Long initialCategoryId;
+        switch (level.toLowerCase()) {
+            case "beginner":
+                initialCategoryId = 1L;
+                break;
+            case "intermediate":
+                initialCategoryId = 5L;
+                break;
+            case "advanced":
+                initialCategoryId = 16L;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid level");
+        }
+
+        // 3. 학습한 카테고리를 확인하고 다음 카테고리로 이동
+        Long nextCategoryId = getNextCategoryId(userId, initialCategoryId);
+        userLevel.setCategoryId(nextCategoryId);
+        userLevelRepository.save(userLevel);
+    }
+
+    private Long getNextCategoryId(Long userId, Long initialCategoryId) {
+        Long currentCategoryId = initialCategoryId;
+
+        // 1. 사용자가 학습한 모든 카드 ID와 모든 카테고리의 카드 ID를 한 번에 가져오기
+        List<Long> studiedCardIds = cardScoreRepository.findByUserId(userId).stream().map(CardScore::getCardId).toList();
+        Map<Long, List<Long>> allCategoryCards = cardRepository.findAll().stream()
+                .collect(Collectors.groupingBy(Card::getCategoryId, Collectors.mapping(Card::getCardId, Collectors.toList())));
+
+        // 2. 현재 카테고리부터 시작하여 모든 카드를 학습했는지 검사
+        while (allCategoryCards.containsKey(currentCategoryId)) {
+            List<Long> currentCategoryCards = allCategoryCards.get(currentCategoryId);
+
+            long studiedCount = currentCategoryCards.stream().filter(studiedCardIds::contains).count();
+
+            // 모든 카드를 학습했다면 다음 카테고리로 이동
+            if (studiedCount == currentCategoryCards.size()) {
+                currentCategoryId++;
+            } else {
+                break;
+            }
+        }
+
+        return currentCategoryId;
+    }
+
 }
