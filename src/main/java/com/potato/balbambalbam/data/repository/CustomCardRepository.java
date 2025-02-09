@@ -27,4 +27,6 @@ public interface CustomCardRepository extends JpaRepository<CustomCard, Long> {
 
     @Query("SELECT COUNT(cc) FROM custom_card cc WHERE cc.userId = :userId")
     Long countByUserId(@Param("userId") Long userId);
+
+    void deleteByUserId(Long userId);
 }
