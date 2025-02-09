@@ -58,7 +58,7 @@ public class JoinController {
             @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없는 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "500", description = "서버 오류로 인해 회원정보 조회에 실패한 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
     })
-    //회원정보 출력
+    // 회원정보 출력
     @GetMapping("/users")
     public ResponseEntity<?> getUserById(@RequestHeader("access") String access) {
         Long userId = jwtUtil.getUserId(access);
@@ -73,6 +73,7 @@ public class JoinController {
             @ApiResponse(responseCode = "400", description = "탈퇴 상태가 아닌 사용자에 대한 복구 시도", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class))),
             @ApiResponse(responseCode = "500", description = "서버 오류로 인해 복구에 실패한 경우", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionDto.class)))
     })
+    // 회원정보 복구
     @PostMapping("/users/recover")
     public ResponseEntity<?> recoverUser(@RequestParam("socialId") String socialId, HttpServletResponse response) {
         String message = joinService.recoverDeletedUser(socialId, response);

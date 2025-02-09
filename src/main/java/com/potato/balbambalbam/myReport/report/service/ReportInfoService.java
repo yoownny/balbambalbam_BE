@@ -2,9 +2,12 @@ package com.potato.balbambalbam.myReport.report.service;
 
 import com.potato.balbambalbam.data.entity.CardScore;
 import com.potato.balbambalbam.data.entity.User;
+import com.potato.balbambalbam.data.entity.UserLevel;
 import com.potato.balbambalbam.data.repository.CardScoreRepository;
 import com.potato.balbambalbam.data.repository.UserAttendanceRepository;
+import com.potato.balbambalbam.data.repository.UserLevelRepository;
 import com.potato.balbambalbam.data.repository.UserRepository;
+import com.potato.balbambalbam.exception.UserNotFoundException;
 import com.potato.balbambalbam.myReport.report.dto.ReportInfoDto;
 import com.potato.balbambalbam.myReport.weaksound.service.PhonemeService;
 import java.time.DayOfWeek;
@@ -27,6 +30,7 @@ public class ReportInfoService {
     private final UserAttendanceRepository userAttendanceRepository;
     private final CardScoreRepository cardScoreRepository;
     private final PhonemeService phonemeService;
+    private final UserLevelRepository userLevelRepository;
 
     @Transactional(readOnly = true)
     public ReportInfoDto getMyReportInfo(Long userId) {
@@ -86,13 +90,17 @@ public class ReportInfoService {
         reportInfoDto.setFridayCards(cardsByDay.get(DayOfWeek.FRIDAY));
         reportInfoDto.setSaturdayCards(cardsByDay.get(DayOfWeek.SATURDAY));
 
-
         // 5. 이번 주 평균 카드 수 계산
         long totalWeeklyCards = weeklyCardScores.size();
         reportInfoDto.setWeeklyAverageCards(daysFromSunday > 0 ? totalWeeklyCards / daysFromSunday : 0);
 
         // 6. 취약 음소 목록 조회
         reportInfoDto.setWeakPhonemes(phonemeService.getWeakPhonemes(userId));
+
+        // 7. 사용자 레벨 조회
+        UserLevel userLevel = userLevelRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User level not found"));
+        reportInfoDto.setCardLevel(userLevel.getCategoryId());
 
         return reportInfoDto;
     }

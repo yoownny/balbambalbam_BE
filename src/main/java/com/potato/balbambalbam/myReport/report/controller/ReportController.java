@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Tag(name = "My Report API", description = "My Report에 필요한 ...을 반환한다.")
 public class ReportController {
-    private final JoinService joinService;
     private final JWTUtil jwtUtil;
     private final ReportInfoService reportInfoService;
 
