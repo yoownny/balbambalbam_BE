@@ -94,11 +94,7 @@ public class JoinService {
             throw new IllegalStateException("탈퇴한 회원입니다.");
         }
 
-        // Fetch user level by userId
-        UserLevel editUserLevel = userLevelRepository.findByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("사용자 레벨 정보를 찾을 수 없습니다."));
-
-        return new EditResponseDto(editUser.getName(), editUser.getAge(), editUser.getGender(), editUserLevel.getCategoryId());
+        return new EditResponseDto(editUser.getName(), editUser.getAge(), editUser.getGender());
     }
 
     @Transactional
