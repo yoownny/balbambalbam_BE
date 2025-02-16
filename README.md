@@ -30,9 +30,22 @@
 &nbsp;
 
 ## Update log
-- 2024.07.15 version 1.0.0 App 출시
-- 2024.08.05 version 1.1.0 1차 update
+**| 2024.07.15 version 1.0.0 App 출시**
+
+
+**| 2024.08.05 version 1.1.0 1차 update**
   - 한국어 발음 표기법 → 한영 뜻 제공으로 변경
   - 사진 base64로 인코딩해서 json으로 전송 → 서버에서 받아가는 것으로 변경(시간 단축)
   - 음절 학습 시 피드백 점수, 추천학습카드, STT 제공하지 않고 waveform과 녹음만 제공하도록 변경
   - 추천학습 카드 초성 → initial consonant, 중성 → Medial vowel, 종성 → final consonant로 변경
+
+
+**|  2025.01.04 version 1.2.0 2차 update**
+  - 홈 화면, 프로필, 피드백, 커스텀 카드. 알림창 UI & UX 개선
+  - 새로운 기능 추가
+    - 일일 학습 콘텐츠 제공 기능 
+    - 오늘의 추천 학습 카드
+    - 레벨 & 경험치 제도
+    - 출석 체크 기능
+    
+**| 2025.02.17 version 1.2.1 update**
