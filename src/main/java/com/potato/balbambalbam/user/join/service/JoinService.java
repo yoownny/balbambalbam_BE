@@ -12,6 +12,7 @@ import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -139,13 +140,19 @@ public class JoinService {
         cardScoreRepository.deleteByUserId(userId);
         customCardRepository.deleteByUserId(userId);
         notificationReadRepository.deleteByUserId(userId);
-        refreshRepository.deleteByUserId(userId);
         userAttendanceRepository.deleteByUserId(userId);
         userLevelRepository.deleteByUserId(userId);
         userWeakSoundRepository.deleteByUserId(userId);
+        refreshRepository.deleteByUserId(userId);
 
-        // 3. 사용자 민감 정보 초기화 (익명화)
-        user.setSocialId("Deleted");
+        // 3. UUID 생성 (중복 체크)
+        String uniqueSocialId;
+        do {
+            uniqueSocialId = "Deleted_" + UUID.randomUUID();
+        } while (userRepository.existsBySocialId(uniqueSocialId));  // DB에 같은 UUID가 있으면 다시 생성
+
+        // 4. 사용자 민감 정보 초기화 (익명화)
+        user.setSocialId(uniqueSocialId);
         user.setName("Anonymous");
         user.setStatusId(4L);  // 익명화된 사용자 상태로 설정
         userRepository.save(user);

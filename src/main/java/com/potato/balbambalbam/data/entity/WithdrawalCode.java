@@ -11,8 +11,7 @@ public class WithdrawalCode {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int code;
+    private long code;
 
     @Column(name = "description", nullable = false)
     private String description;

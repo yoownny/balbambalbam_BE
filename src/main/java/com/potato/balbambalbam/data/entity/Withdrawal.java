@@ -20,7 +20,7 @@ public class Withdrawal {
     private long userId;
 
     @Column(name = "code", nullable = false)
-    private int code;
+    private long code;
 
     @Column(name = "details")
     private String details;
