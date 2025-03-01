@@ -20,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,7 @@ public class HomeInfoService {
         setDailyWordInfo(homeInfoDto);
         setUserNumInfo(userId, homeInfoDto);
         homeInfoDto.setHasUnreadNotifications(notificationService.hasUnreadNotifications(userId));
+        setLastLoginDate(userId, homeInfoDto);
 
         return homeInfoDto;
     }
@@ -127,6 +129,18 @@ public class HomeInfoService {
         homeInfoDto.setSavedCardNumber(savedCards);
         homeInfoDto.setMissedCardNumber(missedCards);
         homeInfoDto.setCustomCardNumber(customCards);
+    }
+
+    private void setLastLoginDate(Long userId, HomeInfoDto homeInfoDto) {
+        LocalDate today = LocalDate.now();
+        Optional<UserAttendance> lastAttendance = userAttendanceRepository
+                .findTopByUserIdAndAttendanceDateBeforeOrderByAttendanceDateDesc(userId, today);
+
+        if (lastAttendance.isPresent()) {
+            homeInfoDto.setLastLoginDate(lastAttendance.get().getAttendanceDate());
+        } else {
+            homeInfoDto.setLastLoginDate(null);
+        }
     }
 
 }

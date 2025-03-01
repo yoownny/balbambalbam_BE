@@ -23,11 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Home API", description = "홈 화면에 필요한 사용자 레벨, 레벨 경험치, 사용자 경험치, 주간 출석 상황, 오늘의 추천 단어를 반환한다. ")
 public class HomeController {
 
-    private final JoinService joinService;
     private final JWTUtil jwtUtil;
     private final HomeInfoService homeInfoService;
-    private final NotificationService notificationService;
-
 
     @Operation(summary = "홈 화면 정보 조회", description = "사용자의 홈 화면에 필요한 모든 정보를 반환한다.")
     @ApiResponses(value = {

@@ -2,6 +2,7 @@ package com.potato.balbambalbam.data.repository;
 
 import com.potato.balbambalbam.data.entity.UserAttendance;
 import java.time.LocalDate;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -36,4 +37,7 @@ public interface UserAttendanceRepository extends JpaRepository<UserAttendance, 
 
     @Query("SELECT COUNT(ua) FROM user_attendance ua WHERE ua.userId = :userId AND ua.isPresent = :isPresent")
     Long countByUserIdAndIsPresent(@Param("userId") Long userId, @Param("isPresent") Boolean isPresent);
+
+    Optional<UserAttendance> findTopByUserIdAndAttendanceDateBeforeOrderByAttendanceDateDesc(Long userId, LocalDate today);
+
 }
