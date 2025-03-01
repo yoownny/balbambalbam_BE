@@ -1,6 +1,7 @@
 package com.potato.balbambalbam.user.home.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,4 +34,6 @@ public class HomeInfoDto {
     private Long customCardNumber;
     @Schema(description = "읽지 않은 알림 존재 여부", example = "true")
     private boolean hasUnreadNotifications;
+    @Schema(description = "최근 로그인 날짜", example = "2025-02-17")
+    private LocalDate lastLoginDate;
 }
