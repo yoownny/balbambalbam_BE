@@ -40,4 +40,9 @@ public interface UserAttendanceRepository extends JpaRepository<UserAttendance, 
 
     Optional<UserAttendance> findTopByUserIdAndAttendanceDateBeforeOrderByAttendanceDateDesc(Long userId, LocalDate today);
 
+    @Query("SELECT DISTINCT ua.userId FROM user_attendance ua WHERE ua.attendanceDate = :date")
+    List<Long> findUserIdsByAttendanceDate(@Param("date") LocalDate date);
+
+    @Query("SELECT DISTINCT ua.userId FROM user_attendance ua")
+    List<Long> findAllAttendedUserIds();
 }
