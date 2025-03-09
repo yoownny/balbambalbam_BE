@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -36,64 +37,40 @@ public class ScheduledNotificationService {
     @Value("${ai.service.notice.url}")
     private String AI_URL;
 
-//    @Scheduled(cron = "0 0 7 * * ?")
-//    public void sendAbsentNotifications() {
-//        LocalDate today = LocalDate.now();
-//        List<Long> allUsers = userAttendanceRepository.findAllAttendedUserIds();
-//
-//        List<Long> absentUsers31Days = getAbsentUsers(today.minusDays(31), allUsers);
-//        List<Long> absentUsers7Days = getAbsentUsers(today.minusDays(7), allUsers).stream()
-//                .filter(user -> !absentUsers31Days.contains(user))
-//                .toList();
-//        List<Long> absentUsers3Days = getAbsentUsers(today.minusDays(3), allUsers).stream()
-//                .filter(user -> !absentUsers31Days.contains(user))
-//                .filter(user -> !absentUsers7Days.contains(user))
-//                .toList();
-//        List<Long> absentUsers1Day = getAbsentUsers(today.minusDays(1), allUsers).stream()
-//                .filter(user -> !absentUsers31Days.contains(user))
-//                .filter(user -> !absentUsers7Days.contains(user))
-//                .filter(user -> !absentUsers3Days.contains(user))
-//                .toList();
-//
-//        int messageNumber = 0;
-//        if (today.getDayOfMonth() % 2 == 0) {
-//            messageNumber = 1;
-//        }
-//        sendNotification(absentUsers1Day, ONE_DAY_MESSAGES.get(messageNumber));
-//        sendNotification(absentUsers3Days, THREE_DAY_MESSAGES.get(messageNumber));
-//        sendNotification(absentUsers7Days, SEVEN_DAY_MESSAGES.get(messageNumber));
-//        sendNotification(absentUsers31Days, THIRTY_DAY_MESSAGES.get(messageNumber));
-//    }
-
+    @Async
     @Scheduled(cron = "0 0 7 * * ?")
     public void sendAbsentNotifications() {
         LocalDate today = LocalDate.now();
+
+        List<Long> absentUsers31Days = getAbsentUsers(31);
+        List<Long> absentUsers7Days = getAbsentUsers(7);
+        List<Long> absentUsers3Days = getAbsentUsers(3);
+        List<Long> absentUsers1Day = getAbsentUsers(1);
 
         int messageNumber = 0;
         if (today.getDayOfMonth() % 2 == 0) {
             messageNumber = 1;
         }
-        sendNotification(List.of(46L), ONE_DAY_MESSAGES.get(messageNumber));
+        sendNotification(absentUsers1Day, ONE_DAY_MESSAGES.get(messageNumber));
+        sendNotification(absentUsers3Days, THREE_DAY_MESSAGES.get(messageNumber));
+        sendNotification(absentUsers7Days, SEVEN_DAY_MESSAGES.get(messageNumber));
+        sendNotification(absentUsers31Days, THIRTY_DAY_MESSAGES.get(messageNumber));
     }
 
     private void sendNotification(List<Long> absentUsers1Day, String message) {
         for (Long userId : absentUsers1Day) {
             User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("사용자가 없습니다."));
-            ScheduledNotificationRequest scheduledNotificationRequest = new ScheduledNotificationRequest(user.getSocialId(), MessageFormat.format(message, userId));
+            ScheduledNotificationRequest scheduledNotificationRequest = new ScheduledNotificationRequest(user.getSocialId(), MessageFormat.format(message, user.getName()));
             postNotification(scheduledNotificationRequest);
         }
     }
 
-    private List<Long> getAbsentUsers(LocalDate targetDate, List<Long> allUsers) {
-        List<Long> presentUsers = userAttendanceRepository.findUserIdsByAttendanceDate(targetDate);
-
-        return allUsers.stream()
-                .filter(userId -> !presentUsers.contains(userId))
-                .toList();
+    private List<Long> getAbsentUsers(int date) {
+        return userAttendanceRepository.findUserIdsWithLastAttendanceDaysAgo(date);
     }
 
     public void postNotification(ScheduledNotificationRequest scheduledNotificationRequest) {
-        ScheduledNotificationResponse scheduledNotificationResponse = webClient.post()
+        webClient.post()
                 .uri(AI_URL + "/personal_notice")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just(scheduledNotificationRequest), ScheduledNotificationRequest.class)
