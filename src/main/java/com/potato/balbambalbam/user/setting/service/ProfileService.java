@@ -9,7 +9,6 @@ import com.potato.balbambalbam.user.setting.dto.EditResponseDto;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
