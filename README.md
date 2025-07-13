@@ -1,6 +1,11 @@
-# BalbamBalbam - 외국인을 위한 한국어 발음 교정 시스템
+# 🎯 발밤발밤 (BalbamBalbam) - 외국인을 위한 한국어 발음 교정 시스템
 
-![대표화면](https://github.com/Capstone-4Potato/.github/assets/108220648/61e54f7d-b165-4700-a1af-2b0d9d137cf0)
+<img width="1380" alt="image" src="https://github.com/user-attachments/assets/f6f5609e-4261-4bef-9d7a-287630ea33b9" />
+<img width="1336" alt="image" src="https://github.com/user-attachments/assets/7d46fe4c-66ff-4643-a0e5-ce4f831cef0d" />
+
+Download [Click Here](https://apps.apple.com/kr/app/발밤발밤-balbambalbam/id6505030399)
+
+README [Click Here](https://github.com/Capstone-4Potato/.github)
 
 ---
 발밤발밤은 **한국어 발음 교정 모바일 서비스**로 빠르게 성장하는 한국어 시장 대비 한국어 교육 공급의 부족과 한국어 발음 학습의 어려움을 해소하기 위하여 제작되었습니다.
@@ -9,30 +14,115 @@
 
 또한 음절-단어-문장 커리큘럼,  발음 테스트, 사용자가 직접 학습카드 생성, 복습하기 등 더 다양한 서비스로 사용자의 효율적인 한국어 발음 학습을 돕습니다.
 
----
-현재 [ios 앱스토어](https://apps.apple.com/kr/app/%EB%B0%9C%EB%B0%A4%EB%B0%9C%EB%B0%A4-balbambalbam/id6505030399)에서 다운로드 받으실 수 있습니다. 
+## 📋 목차
+- [프로젝트 개요](#-프로젝트-개요)
+- [기술 스택](#-기술-스택)
+- [주요 기능](#-주요-기능)
+- [백엔드 구현 상세](#-백엔드-구현-상세)
+- [보안 시스템](#-보안-시스템)
+- [개발 프로세스](#-개발-프로세스)
 
-시연 영상은 [해당 링크](https://www.youtube.com/watch?v=5z-CwNY1Nic)에서, 자세한 기능과 사용법은 [해당 링크](https://github.com/Capstone-4Potato/.github)를 참고 해주세요.
+## 🎯 프로젝트 개요
 
-&nbsp;
+발밤발밤은 AI 기반 음성 분석 기술을 활용하여 한국어 학습자의 발음을 실시간으로 분석하고 개인화된 피드백을 제공하는 교육 서비스입니다. 
+사용자의 취약음소를 분석하여 맞춤형 학습 경로를 제시하고, 체계적인 레벨 시스템을 통해 단계별 발음 향상을 지원합니다.
 
-## Backend Stack
-**Language** : `Java 21`
+## 🛠 기술 스택
 
-**Framework** : `Spring 6.1` `SpringBoot 3.2` `SpringSecurity`
+### Backend
+- **Java 21** - 최신 LTS 버전
+- **Spring Boot 3.x** - 애플리케이션 프레임워크
+- **Spring Security** - JWT 기반 인증/인가
+- **Spring Data JPA** - ORM 및 데이터 접근
+- **MySQL 8.0+** - 메인 DB + 로그 분리 DB
+- **Gradle** - 빌드 도구
+- **Lombok** - 코드 간소화
 
-**OS** : `Linux CentOS 7` `bootJar 배포`
+### AI Integration
+- **WebClient** - 외부 AI 서비스 연동
+- **실시간 음성 분석** - 발음 정확도 측정
+- **TTS 생성** - 연령/성별별 음성 합성
+- **자연어 처리** - 번역 및 발음 기호 생성
 
-**DB & Data** : `MySQL 5.7` `JPA`
+### Documentation & Monitoring
+- **Swagger/OpenAPI 3** - API 문서화
+- **분리된 로그 시스템** - 운영/로그 DB 분리
+- **예외 처리 시스템** - 통합 에러 핸들링
 
-**ETC** : `Swagger` `OAuth` `JWT`
+## ✨ 주요 기능
 
-&nbsp;
+### 🎓 학습 시스템
+- **3단계 학습 과정**: 음절 → 단어 → 문장 순차 학습
+- **AI 음성 피드백**: 실시간 발음 분석 및 정확도 점수 제공
+- **개인화 학습 경로**: 사용자 레벨에 맞춘 자동 커리큘럼 생성
+- **오늘의 추천 단어**: 매일 새로운 학습 콘텐츠 제공
 
-## Update log
-- 2024.07.15 version 1.0.0 App 출시
-- 2024.08.05 version 1.1.0 1차 update
-  - 한국어 발음 표기법 → 한영 뜻 제공으로 변경
-  - 사진 base64로 인코딩해서 json으로 전송 → 서버에서 받아가는 것으로 변경(시간 단축)
-  - 음절 학습 시 피드백 점수, 추천학습카드, STT 제공하지 않고 waveform과 녹음만 제공하도록 변경
-  - 추천학습 카드 초성 → initial consonant, 중성 → Medial vowel, 종성 → final consonant로 변경
+### 🔬 취약음소 분석
+- **음소별 정밀 분석**: 초성, 중성, 종성 단위 발음 평가
+- **취약음소 테스트**: 개인별 발음 약점 진단
+- **맞춤형 추천 카드**: 취약음소 기반 학습 콘텐츠 제공
+- **학습 진도 추적**: 실시간 발음 개선 모니터링
+
+### 👤 사용자 경험
+- **레벨 시스템**: 경험치 기반 레벨 진행
+- **출석 체크**: 매일 학습 동기 부여 시스템
+- **북마크 시스템**: 중요 학습 카드 개인 컬렉션
+- **커스텀 카드**: 사용자 정의 학습 콘텐츠 생성
+
+### 📊 학습 관리
+- **상세 학습 리포트**: 일별/주별/월별 학습 통계
+- **복습 시스템**: 낮은 점수 카드 자동 복습 추천
+- **알림 시스템**: 학습 리마인더 및 업데이트 알림
+- **다중 음성 지원**: 연령/성별별 다양한 TTS 음성
+
+## 🔧 백엔드 구현 상세
+
+### 프로젝트 구조
+```
+src/main/java/com/potato/balbambalbam/
+├── BalbambalbamApplication.java           # 애플리케이션 진입점
+├── config/
+│   ├── SecurityConfig.java               # 보안 설정
+│   ├── TestDataSourceConfig.java         # 메인 DB 설정
+│   └── LogDataSourceConfig.java          # 로그 DB 설정
+├── user/
+│   ├── token/                            # JWT 인증 시스템
+│   ├── join/                             # 회원가입
+│   ├── home/                             # 홈 화면
+│   └── notification/                     # 알림 시스템
+├── card/
+│   ├── cardInfo/                         # 카드 정보 조회
+│   ├── cardFeedback/                     # AI 피드백 처리
+│   └── todayCourse/                      # 오늘의 과정
+├── home/
+│   ├── learningCourse/                   # 학습 과정 관리
+│   ├── customCard/                       # 커스텀 카드
+│   └── menu/                             # 메뉴 기능
+├── myReport/
+│   ├── report/                           # 학습 리포트
+│   ├── test/                             # 취약음소 테스트
+│   └── weaksound/                        # 취약음소 관리
+└── exception/                            # 예외 처리
+```
+
+
+## 🔒 보안 시스템
+
+### JWT 토큰 관리
+- **Access Token**: 2시간 유효, API 인증용
+- **Refresh Token**: 10일 유효, 토큰 갱신용
+- **자동 만료 처리**: 만료된 토큰 자동 삭제
+- **중복 로그인 방지**: 사용자별 단일 세션 관리
+
+## 🔄 개발 프로세스
+
+1. **요구사항 분석**: 한국어 학습자의 발음 교육 니즈 파악
+2. **기술 스택 선정**: Spring Boot + AI 서비스 연동 아키텍처 설계
+3. **데이터 모델링**: 음소 기반 발음 분석을 위한 DB 스키마 설계
+4. **AI 연동 구현**: WebClient 기반 외부 AI 서비스 통합
+5. **인증 시스템 구축**: JWT 기반 보안 시스템 및 세션 관리
+6. **학습 시스템 개발**: 레벨 시스템, 취약음소 분석, 개인화 알고리즘
+7. **API 문서화**: Swagger를 통한 체계적인 API 명세 작성
+8. **성능 최적화**: 다중 DB 구성, 캐싱, 압축 등 성능 튜닝
+9. **테스트 및 배포**: CI/CD 파이프라인 구축 및 운영 환경 배포
+
